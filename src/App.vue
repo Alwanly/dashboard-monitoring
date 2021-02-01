@@ -1,5 +1,5 @@
 <template>  
-    <v-expand-transition mode="out-in">
+    <v-expand-transition mode="in-out">
       <router-view></router-view>        
     </v-expand-transition>    
 </template>

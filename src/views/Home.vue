@@ -2,7 +2,7 @@
     <v-app>
       <Navbar/>      
       <v-main class="ma-4">              
-          <v-slide-x-transition mode="out" hide-on-leave="true">
+          <v-slide-x-transition mode="out-in">
             <router-view></router-view>                              
             </v-slide-x-transition>
         </v-main>          

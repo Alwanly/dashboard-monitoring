@@ -38,26 +38,28 @@
 </template>
 
 <script>
-import store from '../plugins/store.js'
-export default {    
+export default {      
     data: ()=>({
         drawer:true,
         links:[
             {icon:'dashboard',text:'Dashboard',route:'/'},
             {icon:'folder',text:'Trends',route:'/trends'},
         ],
-        username: store.state.user
-    }),
-    computed:{
-        isLoggedIn : function(){ return this.$store.getters.isLoggedIn}        
-    },
+        username:null,
+    }),      
     methods:{
         logout:function(){
                 this.$store.dispatch('logout')
                 .then(()=>{
                     this.$router.push('/login')
                 })          
-        }    
+        },
+        getUser:function (){
+            this.username = sessionStorage.getItem('user')
+        }   
+    },
+    mounted(){
+        this.getUser()
     }
 }
 </script>

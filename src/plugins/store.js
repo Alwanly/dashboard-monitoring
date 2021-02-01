@@ -6,7 +6,7 @@ import axios from 'axios'
 Vue.use(Vuex)
 
 const base_url = "http://127.0.0.1:8000/api/";
-// Vue.axios.defaults.baseURL = base_url;
+// const base_url = "http://dev.tokohaji.co.id/api/";
 var token = '';
 var userInfo = {};
 var optionAxios = {
@@ -34,16 +34,19 @@ export default new Vuex.Store({
                 axios({url:base_url+'login',data: formData,method:'POST'} , optionAxios)                
                 .then(resp=>{
                     // console.log("2")
-                    token = resp.data.token                                        
-                    axios.defaults.headers.common['Authorization'] = 'Bearer '+token                    
-                    sessionStorage.setItem('token','Bearer '+token)
-                    return axios({url:base_url+'me',method:""})                         
+                    this.state.token = resp.data.token                                        
+                    axios.defaults.headers.common['Authorization'] = 'Bearer '+this.state.token                    
+                    sessionStorage.setItem('token','Bearer '+this.state.token)
+                    return axios({url:base_url+'user/me',method:""})                         
                 }).then(resp =>{  
                     // console.log("3") 
                     // userInfo = resp.data.data    
-                    // console.log(resp.data.data)    
+                    console.log(resp.data.data)    
                     // console.table(userInfo)
-                    sessionStorage.setItem('user',resp.data.data.display_name)                                        
+                    this.state.status = true;
+                    this.state.user = resp.data.data.display_name
+                    sessionStorage.setItem('user',this.state.user)                                        
+                    sessionStorage.setItem('status',this.state.status)                                        
                     commit('auth_success','Bearer '+token, userInfo)                                            
                     resolve(resp)           
                 }).catch(err=>{
@@ -56,7 +59,8 @@ export default new Vuex.Store({
             return new Promise((resolve)=>{
                 commit('logout')                                
                 sessionStorage.removeItem('token')
-                delete axios.defaults.headers.common['Authorization']
+                sessionStorage.removeItem('user')
+                delete axios.defaults.headers.common['Authorization']                
                 resolve()                
             })
         }

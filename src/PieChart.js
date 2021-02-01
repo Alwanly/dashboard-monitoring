@@ -1,7 +1,7 @@
-import { Line } from 'vue-chartjs'
+import { Pie } from 'vue-chartjs'
 
 export default {
-  extends: Line,
+  extends: Pie,
   data: () => ({
     chartdata: {
       labels: ['January', 'February','Maret','April','Mei','Juni','Juli','Agustus','Septerm','November','Desember'],
