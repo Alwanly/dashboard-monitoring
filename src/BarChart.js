@@ -10,6 +10,10 @@ export default {
           label: 'Data One',
           backgroundColor: '#f87979',
           data: [40, 20,10,50,100,120,30,100,10,300,500]
+        }, {
+          label: 'Data Two',
+          backgroundColor:'blue',          
+          data: [10, 50,50,10,12,120,30,100,10,300,10]
         }
       ]
     },
