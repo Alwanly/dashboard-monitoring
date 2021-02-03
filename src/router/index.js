@@ -16,12 +16,12 @@ const routes = [
     path:'',
     component:Home,
     beforeEnter:(to,from,next)=>{            
-      if(sessionStorage.getItem('token') == '') {     
+      if(!sessionStorage.getItem('status')) {     
         alert("belum login")           
         next({path:'/login'})
       }
       else next()
-    },
+    },    
     children:[     
       {
         path: '/',

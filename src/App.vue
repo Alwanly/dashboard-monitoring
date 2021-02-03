@@ -6,7 +6,18 @@
 
 <script>
 export default {
-  name:'App',  
+  name:'App',
+  watch:{
+    session:function(){
+    console.log(this.$store.state.status)
+    if(this.$store.state.status){
+       this.$axios.defaults.headers.common['Authorization'] = this.$store.state.token  
+    }else{
+      sessionStorage.setItem('status',false)
+      this.$router.push("/login");
+    }
+  }  
+  }
 }
 </script>
 

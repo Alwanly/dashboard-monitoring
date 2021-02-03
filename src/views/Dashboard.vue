@@ -10,7 +10,7 @@
               </v-list-item-avatar>
               <v-list-item-content class="text-center">
                 <div class="text-h5 white--text">Total Users</div>
-                <v-list-item-title class="mb-1 white--text text-h4">{{totalUser}}</v-list-item-title>                
+                <v-list-item-title class="mb-1 white--text text-h4">{{animatedNumber}}</v-list-item-title>                
               </v-list-item-content>              
             </v-list-item>          
           </v-card>          
@@ -77,31 +77,37 @@
             <line-chart class="mb-3" :style="line_chart" :height="110" ></line-chart>                                        
         </v-container>      -->
     </v-flex>        
-    <v-flex lg3>
-      <v-container class="rounded-lg mt-6" style=""  >                    
-        <pie-chart v-if="chartdataUserType" :chartdata="chartdataUserType" :options="options"/>         
+    <v-flex lg3>       
+        <v-container>
+          <h2 class="subheading grey--text">Users Type</h2>
+          <v-card elevation="3" class="rounded-lg pa-4 mt-4" :loading="chartdataUserType==null">
+            <pie-chart v-if="chartdataUserType" :data="chartdataUserType" :options="options"/>         
+          </v-card>
+        </v-container>               
         <v-spacer></v-spacer>   
-                
-        <pie-chart v-if="chartdataMobileType" :chartdata="chartdataMobileType" :options="options"/>            
+        <v-container>
+          <h2 class="subheading grey--text">Mobile App Usage</h2>          
+          <v-card elevation="3" class="rounded-lg pa-4 mt-4" :loading="chartdataMobileType==null">
+            <pie-chart v-if="chartdataMobileType" :data="chartdataMobileType" :options="options"/>            
+          </v-card>
+        </v-container>                
         <v-spacer></v-spacer>   
-        <h2 class="subheading grey--text mb-4">Users Access</h2>
-        <v-card-title>
-        <v-text-field
-          v-model="search"
-          append-icon="mdi-magnify"
-          label="Search"
-          single-line
-          hide-details
-        ></v-text-field>
-      </v-card-title>
-        <v-data-table
-        :headers="headers"
-        :items="activitasUser"
-        :items-per-page="5"
-        :search="search"      
-        class="elevation-1">
-        </v-data-table>
-      </v-container>
+        <v-container>
+        <h2 class="subheading grey--text mb-4">Last Active</h2>                           
+        <div v-for="item in tabledataLastActiveUser" v-bind:key="item.created_at">           
+          <v-card class="ma-3">
+            <v-list-item>
+              <v-list-item-avatar>
+                <v-icon size="50">account_circle</v-icon>                                
+              </v-list-item-avatar>
+              <v-list-item-content>                
+                <v-list-item-title>{{item.user.display_name}}</v-list-item-title>
+                <v-list-item-subtitle class="text-right">{{moment(item.created_at)}}</v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+          </v-card>                            
+        </div>        
+        </v-container>
     </v-flex>
     </v-layout>
   </div>
@@ -109,6 +115,7 @@
 
 <script>
 import axios from 'axios';
+import {gsap} from 'gsap';
 // import LineChart from '../LineChart.js'
 import PieChart from '../PieChart.js'
 export default {
@@ -121,7 +128,7 @@ export default {
     return{
       map:null,
       search:'',      
-      activitasUser:[],
+      activitasUser:null,
       loaded:false,
       headers:[
         {
@@ -141,23 +148,34 @@ export default {
       height: '300px',    
       position: 'relative'        
       },
+      tweenedNumber:0,
       totalUser:0,
       totalUserActive:0,
       monthlyVisit:0,
       totalTransaction:0,
-      marker:[],
-      // {
-      //   labels: ['New Users', 'Eksisting'],
-      //   datasets: [
-      //     {          
-      //       backgroundColor:['red','blue'],          
-      //       data: [40,20]
-      //     }               
-      //   ] 
-      // },
+      marker:[],          
       chartUserType: null, 
       chartMobileType: null, 
-      options: { 
+      options: {
+        plugins: {
+          datalabels: {
+            color: "#0f0f0f",
+            textAlign: "center",
+            font: {
+              weight: "bold",
+              size: 16
+            },
+            formatter: (value, ctx) => {
+                let sum = 0;
+                let dataArr = ctx.chart.data.datasets[0].data;
+                dataArr.map(data => {
+                    sum += data;
+                });
+                let percentage = (value*100 / sum).toFixed(2)+"%";
+                return percentage;
+            }
+          }
+        }, 
         responsive: true,
         maintainAspectRatio: true
       }
@@ -170,20 +188,24 @@ export default {
     markers(){
       return this.marker
     },
-    chartdataUserType(){
-      console.log(this.chartUserType)
+    chartdataUserType(){      
       return this.chartUserType
     },
     chartdataMobileType(){
       return this.chartMobileType
+    },
+    tabledataLastActiveUser(){
+      return this.activitasUser
+    },
+     animatedNumber: function() {
+      return this.tweenedNumber.toFixed(0);
     }
   },
   methods:{ 
     getActivitasUser:function(){      
       axios.get('users/aktivitas')
       .then(resp=>{
-        this.activitasUser = resp.data.data
-        console.log(this.headers);
+        this.activitasUser = resp.data.data        
       }).catch(err=> console.log(err))
     },
     getCardData:function(){      
@@ -250,20 +272,28 @@ export default {
         this.getUsertype()
         this.getMobileType()
       }, 50000)
-      setInterval(() => {
-        console.count()
+      setInterval(() => {        
         this.getActivitasUser()
         this.getCardData()             
       }, 5000);                          
-    }    
+    },    
+    moment(date){
+      return this.$moment(date).fromNow()
+    },     
   },
   mounted(){     
     this.getMobileType()
     this.getUsertype() 
     this.getUserLocation()
-    this.getCardData()    
-    this.runMethod()      
-  }  
+    this.getCardData()        
+    this.getActivitasUser()
+  },
+   watch: {
+    totalUser: function(newValue) {
+      gsap.to(this.$data, { duration: 0.5, tweenedNumber: newValue });
+    }
+  }
+  
 }
 </script>
 <style scoped>

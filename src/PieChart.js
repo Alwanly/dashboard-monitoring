@@ -1,18 +1,10 @@
-import { Doughnut } from 'vue-chartjs'
+import { Doughnut, } from 'vue-chartjs'
+import "chartjs-plugin-datalabels";
 
 export default {
   extends: Doughnut,
-  props: {
-    chartdata: {
-      type: Object,
-      default: null
-    },
-    options: {
-      type: Object,
-      default: null
-    }
-  },
+  props: ["data", "options"],
   mounted () {
-    this.renderChart(this.chartdata,this.options)
+    this.renderChart(this.data,this.options)
   }
 }

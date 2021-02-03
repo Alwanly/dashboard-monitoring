@@ -1,20 +1,20 @@
 <template>
     <nav>
-        <v-app-bar light app color="green">
-            <v-app-bar-nav-icon @click.stop="drawer = !drawer">
+        <v-app-bar app color="green darken-3" class="white--text">
+            <v-app-bar-nav-icon @click.stop="drawer = !drawer" class="white--text">
 
             </v-app-bar-nav-icon>
             <v-toolbar-title class="text-uppercase">
-                <span class="font-weight-light">TOKOHAJI</span>
+                <span class="font-weight-light">TOKOHAJI </span>
                 <span>Dashboard</span>
             </v-toolbar-title>
             <v-spacer></v-spacer>            
             <v-btn text @click="logout" > 
-                <span>EXIT</span>
-                <v-icon right>exit_to_app</v-icon>
+                <span class="white--text">EXIT</span>
+                <v-icon right color="#fff">exit_to_app</v-icon>
             </v-btn>
         </v-app-bar>
-        <v-navigation-drawer v-model="drawer" darp app class="yellow draken-4">
+        <v-navigation-drawer v-model="drawer" app color="#FFFF00">
             <v-layout column align-center>
                 <v-flex class="mt-5">
                     <v-avatar size="100">
