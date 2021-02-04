@@ -33,7 +33,7 @@ export default new Vuex.Store({
                     return axios({url:base_url+'user/me',method:""})                         
                 }).then(resp =>{                                                              
                     sessionStorage.setItem('user',resp.data.data.display_name)                                                            
-                    commit('auth_success',true,'Bearer '+ sessionStorage.getItem('token'), sessionStorage.getItem('user'))                                            
+                    commit('auth_success',true,sessionStorage.getItem('token'), sessionStorage.getItem('user'))                                            
                     resolve(resp)           
                 }).catch(err=>{
                     console.log("4")
@@ -61,10 +61,10 @@ export default new Vuex.Store({
             sessionStorage.setItem('status',true)                                                  
         },
         auth_error(state){
-            state.status = 'error'
+            state.status = false
         },
         logout(state){
-            state.status = ''
+            state.status = false
             state.token = ''
             state.user =''
         }

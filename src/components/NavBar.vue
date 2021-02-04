@@ -14,22 +14,22 @@
                 <v-icon right color="#fff">exit_to_app</v-icon>
             </v-btn>
         </v-app-bar>
-        <v-navigation-drawer v-model="drawer" app color="#FFFF00">
+        <v-navigation-drawer v-model="drawer" app color="#333">
             <v-layout column align-center>
                 <v-flex class="mt-5">
                     <v-avatar size="100">
                         <v-img src="/img1.png"></v-img>
                     </v-avatar>
-                    <p class="subheading mt-1 text-center">{{username}}</p>
+                    <p class="subheading mt-1 text-center white--text">{{username}}</p>
                 </v-flex>
             </v-layout>
             <v-list text>
-                <v-list-item v-for="link in links" :key="link.text" router :to="link.route" active-class="border">
+                <v-list-item v-for="link in links" :key="link.text" router :to="link.route" active-class="border" color="#fff">
                     <v-list-item-action>
-                        <v-icon>{{link.icon}}</v-icon>
+                        <v-icon color="#fff">{{link.icon}}</v-icon>
                     </v-list-item-action>
                     <v-list-item-content>
-                        <v-list-item-title>{{link.text}}</v-list-item-title>
+                        <v-list-item-title class="white--text">{{link.text}}</v-list-item-title>
                     </v-list-item-content>
                 </v-list-item>
             </v-list>

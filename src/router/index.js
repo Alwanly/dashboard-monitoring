@@ -4,6 +4,7 @@ import Login from '../views/Login.vue'
 import Dashboard from '../views/Dashboard.vue'
 import TrendsServices from '../views/TrensdServices.vue'
 import Home from '../views/Home.vue'
+import store from '../plugins/store.js';
 
 Vue.use(VueRouter)
 const routes = [
@@ -16,7 +17,7 @@ const routes = [
     path:'',
     component:Home,
     beforeEnter:(to,from,next)=>{            
-      if(!sessionStorage.getItem('status')) {     
+      if(!store.state.status) {     
         alert("belum login")           
         next({path:'/login'})
       }

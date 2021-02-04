@@ -2,55 +2,55 @@
   <div>        
     <h1 class="subheading grey--text">Dashboard</h1>        
       <v-layout row wrap >                                      
-        <v-flex sm3 xs6 md3 lg3 >                    
+        <v-flex sm12 xs12 md3 lg3 xl3 >                    
           <v-card class="ma-3" color="blue">            
             <v-list-item>
-              <v-list-item-avatar size="75" tile class="mt-1">                
-                  <v-icon dark size="75" >supervised_user_circle</v-icon>                
-              </v-list-item-avatar>
-              <v-list-item-content class="text-center">
-                <div class="text-h5 white--text">Total Users</div>
-                <v-list-item-title class="mb-1 white--text text-h4">{{animatedNumber}}</v-list-item-title>                
-              </v-list-item-content>              
+              <v-list-item-content class="text-left">                
+                <v-list-item-title class="mb-1 white--text text-h4 font-weight-bold">{{animatedNumber}}</v-list-item-title>                
+                <v-list-item-subtitle class="white--text font-weight-medium">Total Users</v-list-item-subtitle> 
+              </v-list-item-content>   
+              <v-list-item-avatar size="90" tile class="mt-1">                
+                  <v-icon size="100" >groups</v-icon>                
+              </v-list-item-avatar>                       
             </v-list-item>          
           </v-card>          
         </v-flex>    
-         <v-flex sm3 xs6 md3 lg3  >                    
+         <v-flex sm12 xs12 md3 lg3 xl3   >                    
           <v-card class="ma-3" color="green">            
-            <v-list-item>
-              <v-list-item-avatar size="75" tile class="mt-1">                
-                  <v-icon dark size="75" >account_circle</v-icon>                
-              </v-list-item-avatar>
-              <v-list-item-content class="text-center">
-                <div class="text-h5 white--text">User Active</div>
-                <v-list-item-title class="mb-1 white--text text-h4">{{totalUserActive}}</v-list-item-title>                
+            <v-list-item>              
+              <v-list-item-content>                
+                <v-list-item-title class="mb-1 white--text text-h4 font-weight-bold">{{totalUserActive}}</v-list-item-title>                
+                <v-list-item-subtitle class="white--text font-weight-medium">User Active</v-list-item-subtitle>
               </v-list-item-content>              
+              <v-list-item-avatar size="90" tile class="mt-1">                
+                  <v-icon size="100" >person_add_alt_1</v-icon>                
+              </v-list-item-avatar>
             </v-list-item>          
           </v-card>          
         </v-flex>  
-         <v-flex sm3 xs6 md3 lg3>                    
+         <v-flex sm12 xs12 md3 lg3 xl3 >                    
           <v-card class="ma-3" color="red">            
-            <v-list-item>
-              <v-list-item-avatar size="75" tile class="mt-1">                
-                  <v-icon dark size="75" >show_chart</v-icon>                
-              </v-list-item-avatar>
-              <v-list-item-content class="text-center">
-                <div class="text-h5 white--text">Monthly Visit</div>
-                <v-list-item-title class="mb-1 white--text text-h4">{{monthlyVisit}}</v-list-item-title>                
+            <v-list-item>            
+              <v-list-item-content>               
+                <v-list-item-title class="mb-1 white--text text-h4 font-weight-bold">{{monthlyVisit}}</v-list-item-title>                                 
+                 <v-list-item-subtitle class="white--text font-weight-medium">Monthly Visit</v-list-item-subtitle>
               </v-list-item-content>              
+                <v-list-item-avatar size="90" tile class="mt-1">                
+                  <v-icon size="100" >show_chart</v-icon>                
+              </v-list-item-avatar>
             </v-list-item>          
           </v-card>          
         </v-flex>  
-         <v-flex sm3 xs6 md3 lg3 >                    
+         <v-flex sm12 xs12 md3 lg3 xl3 >                    
           <v-card class="ma-3" color="blue">            
-            <v-list-item>
-              <v-list-item-avatar size="75" tile class="mt-1">                
-                  <v-icon dark size="75" >account_balance_wallet</v-icon>                
-              </v-list-item-avatar>
-              <v-list-item-content class="text-center">
-                <div class="text-h5 white--text">Monthly Transaction</div>
-                <v-list-item-title class="mb-1 white--text text-h4">{{totalTransaction}}</v-list-item-title>                
+            <v-list-item>             
+              <v-list-item-content>                
+                <v-list-item-title class="mb-1 white--text text-h4 font-weight-bold">Rp.{{rupiah(totalTransaction)}}</v-list-item-title>                                
+                <v-list-item-subtitle class="white--text font-weight-medium">Monthly Transaction</v-list-item-subtitle>
               </v-list-item-content>              
+               <v-list-item-avatar size="90" tile class="mt-1">                
+                  <v-icon size="100" >account_balance_wallet</v-icon>                
+              </v-list-item-avatar>
             </v-list-item>          
           </v-card>          
         </v-flex>                   
@@ -72,23 +72,26 @@
           </GmapCluster>
           </GmapMap>                             
         </v-container>     
-        <!-- <v-container>
-          <h2 class="subheading grey--text mb-4">Mobile usage</h2>            
-            <line-chart class="mb-3" :style="line_chart" :height="110" ></line-chart>                                        
-        </v-container>      -->
+        <v-container>
+          <h2 class="subheading grey--text mb-4">Mobile Version</h2>  
+          <v-card :loading="chartDataMobileVersion==null" elevation="3" class="pa-4">
+            <line-chart v-if="chartDataMobileVersion" class="mb-3" :height="110" :data="chartDataMobileVersion" :options="optionsLine" ></line-chart>                                        
+            </v-card>         
+        </v-container>     
     </v-flex>        
     <v-flex lg3>       
         <v-container>
           <h2 class="subheading grey--text">Users Type</h2>
           <v-card elevation="3" class="rounded-lg pa-4 mt-4" :loading="chartdataUserType==null">
-            <pie-chart v-if="chartdataUserType" :data="chartdataUserType" :options="options"/>         
+            <span v-if="hasilIncrementNewUser!='NaN' && hasilIncrementNewUser!='Infinity'"> {{hasilIncrementNewUser}}%</span>
+            <pie-chart v-if="chartdataUserType" :data="chartdataUserType" :options="optionsDonat"/>         
           </v-card>
         </v-container>               
         <v-spacer></v-spacer>   
         <v-container>
           <h2 class="subheading grey--text">Mobile App Usage</h2>          
           <v-card elevation="3" class="rounded-lg pa-4 mt-4" :loading="chartdataMobileType==null">
-            <pie-chart v-if="chartdataMobileType" :data="chartdataMobileType" :options="options"/>            
+            <pie-chart v-if="chartdataMobileType" :data="chartdataMobileType" :options="optionsDonat"/>            
           </v-card>
         </v-container>                
         <v-spacer></v-spacer>   
@@ -97,11 +100,12 @@
         <div v-for="item in tabledataLastActiveUser" v-bind:key="item.created_at">           
           <v-card class="ma-3">
             <v-list-item>
-              <v-list-item-avatar>
-                <v-icon size="50">account_circle</v-icon>                                
+              <v-list-item-avatar size="70">
+                <v-icon size="65">account_circle</v-icon>                                
               </v-list-item-avatar>
               <v-list-item-content>                
                 <v-list-item-title>{{item.user.display_name}}</v-list-item-title>
+                <v-list-item-subtitle class="mt-1"> From {{item.lokasi}}</v-list-item-subtitle>
                 <v-list-item-subtitle class="text-right">{{moment(item.created_at)}}</v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
@@ -116,39 +120,21 @@
 <script>
 import axios from 'axios';
 import {gsap} from 'gsap';
-// import LineChart from '../LineChart.js'
+import LineChart from '../LineChart.js'
 import PieChart from '../PieChart.js'
 export default {
   name: 'Home',
   components:{
-    // LineChart,    
+    LineChart,    
     PieChart
   },  
   data (){
     return{
       map:null,
-      search:'',      
-      activitasUser:null,
-      loaded:false,
-      headers:[
-        {
-          text: "User IP",
-          value: 'user_ip'
-        },
-        {
-          text:"endPoint",
-          value:'endpoint'
-        },
-        {
-          text:'date',
-          value:'Date'
-        }
-      ],
-      line_chart:{
-      height: '300px',    
-      position: 'relative'        
-      },
-      tweenedNumber:0,
+      loading:false,         
+      activitasUser:null, 
+      newUserThisMonth:0,           
+      increseTotalUser:0,
       totalUser:0,
       totalUserActive:0,
       monthlyVisit:0,
@@ -156,7 +142,18 @@ export default {
       marker:[],          
       chartUserType: null, 
       chartMobileType: null, 
-      options: {
+      chartMobileVersion:null,
+      optionsLine:{
+        scales:{
+          yAxes:[{
+            ticks:{
+              min:1,
+              callback: function(value) {if (value % 1 == 0) {return value;}},                            
+            }
+          }]
+        }
+      },
+      optionsDonat: {
         plugins: {
           datalabels: {
             color: "#0f0f0f",
@@ -198,10 +195,30 @@ export default {
       return this.activitasUser
     },
      animatedNumber: function() {
-      return this.tweenedNumber.toFixed(0);
-    }
+      return this.increseTotalUser.toFixed(0);
+    },
+    priceIdr(){
+      return this.rupiah    
+    },
+    chartDataMobileVersion(){
+      return this.chartMobileVersion
+    },
+    hasilIncrementNewUser(){
+      return this.incrementNewUser()
+    }  
   },
   methods:{ 
+    getMobileAppVersion:function(){
+      axios.get('users/mobile/app')
+      .then(resp=>{
+        this.chartMobileVersion ={
+          labels: ['January', 'February','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'],
+          datasets:resp.data.data
+        }
+      }).catch(err=>{
+        console.error(err)
+      })
+    },
     getActivitasUser:function(){      
       axios.get('users/aktivitas')
       .then(resp=>{
@@ -234,22 +251,21 @@ export default {
     getUsertype:function(){
       axios.get("users/type")
       .then(resp=>{
+        this.newUserThisMonth = resp.data.new_user
         this.chartUserType={
           labels:['New User','Existing User'],
           datasets:[
-            {
+            {              
               data:[resp.data.new_user,resp.data.exiting_user],
               backgroundColor: ['rgba(255, 99, 132, 0.5)','rgba(54, 162, 235, 0.2)']
             }
           ]
-
         }        
       }).catch(err=>{
         console.error(err)
       })
     },
-    getMobileType:function(){
-      this.loaded = false
+    getMobileType:function(){      
       axios.get("users/mobile/usage")
       .then(resp=>{
         this.chartMobileType={
@@ -260,8 +276,7 @@ export default {
               backgroundColor: ['rgba(255, 99, 132, 0.5)','rgba(54, 162, 235, 0.2)']
             }
           ]
-        }        
-        this.loaded = true
+        }                        
       }).catch(err=>{
         console.error(err)
       })
@@ -279,7 +294,20 @@ export default {
     },    
     moment(date){
       return this.$moment(date).fromNow()
-    },     
+    },
+    rupiah(bilangan){      
+      var	number_string = bilangan.toString(),sisa 	= number_string.length % 3,rupiah 	= number_string.substr(0, sisa),ribuan 	= number_string.substr(sisa).match(/\d{3}/g);
+      if (ribuan) {
+        var separator = sisa ? '.' : '';
+        rupiah += separator + ribuan.join('.');
+        }  
+    return rupiah  
+    } ,
+    incrementNewUser(){   
+      let hasil = 0
+      hasil = (this.newUserThisMonth*100/this.totalUser).toFixed(2)      
+      return hasil
+    }
   },
   mounted(){     
     this.getMobileType()
@@ -287,11 +315,13 @@ export default {
     this.getUserLocation()
     this.getCardData()        
     this.getActivitasUser()
+    this.getMobileAppVersion()    
   },
    watch: {
     totalUser: function(newValue) {
-      gsap.to(this.$data, { duration: 0.5, tweenedNumber: newValue });
-    }
+      gsap.to(this.$data, { duration: 0.5, increseTotalUser: newValue });
+    },
+
   }
   
 }
