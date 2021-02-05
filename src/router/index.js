@@ -5,7 +5,7 @@ import Dashboard from '../views/Dashboard.vue'
 import TrendsServices from '../views/TrensdServices.vue'
 import Home from '../views/Home.vue'
 import store from '../plugins/store.js';
-
+import PageSettigs from '../views/Settings.vue'
 Vue.use(VueRouter)
 const routes = [
   {
@@ -33,8 +33,12 @@ const routes = [
         path:'/trends',
         name:'TrendsServices',
         component:TrendsServices
-
-      }   
+      },
+      {
+        path:'/settings',
+        name:'Settings',
+        component:PageSettigs
+      }    
     ]
   }
 ]

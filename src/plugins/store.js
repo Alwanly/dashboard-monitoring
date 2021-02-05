@@ -5,7 +5,7 @@ import axios from 'axios'
 
 Vue.use(Vuex)
 
-const base_url = "http://dev.tokohaji.co.id/api/";
+const base_url = "http://127.0.0.1:8000/api/";
 var optionAxios = {
     headers: {
         'Access-Control-Allow-Origin': '*',
@@ -16,7 +16,13 @@ export default new Vuex.Store({
     state:{
         status:sessionStorage.getItem('status') || false,
         token: sessionStorage.getItem('token') || '',
-        user: sessionStorage.getItem('user') || ''
+        user: sessionStorage.getItem('user') || '',
+        refresh: sessionStorage.getItem('refresh') || 180000,
+        optionRefresh:[
+            {option:1,label:'1 Menit',value:60000},
+            {option:2,label:'3 Menit',value:180000},
+            {option:3,label:'5 Menit',value:300000},
+        ]       
     },
     actions:{
         login({commit}, user){
@@ -44,11 +50,20 @@ export default new Vuex.Store({
         logout({commit}){            
             return new Promise((resolve)=>{
                 commit('logout')                                
-                sessionStorage.clear()                                
+                sessionStorage.removeItem('token')                                
+                sessionStorage.removeItem('user')                                
                 delete axios.defaults.headers.common['Authorization']                
                 resolve()                
             })
+        },
+        saveRefreshTime({commit},refreshTime){
+            return new Promise((resolve)=>{
+                console.log(refreshTime);
+                commit('saveRefreshTime',refreshTime)                                
+                resolve()
+            })
         }
+        
     },
     mutations:{
         auth_request(state){
@@ -67,11 +82,17 @@ export default new Vuex.Store({
             state.status = false
             state.token = ''
             state.user =''
+        },
+        saveRefreshTime(state,time){
+            sessionStorage.setItem('refresh',time)
+            state.refresh = time            
         }
     },
     getters:{
         isLoggedIn: state => !!state.token,
         authStatus: state => state.status,
-        auth: state => state.user
+        auth: state => state.user,
+        optionRefresh: state =>state.optionRefresh,
+        getRefresh: state => state.refresh
     }
 })

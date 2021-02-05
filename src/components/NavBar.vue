@@ -23,8 +23,20 @@
                     <p class="subheading mt-1 text-center white--text">{{username}}</p>
                 </v-flex>
             </v-layout>
+            <v-divider light></v-divider>
             <v-list text>
-                <v-list-item v-for="link in links" :key="link.text" router :to="link.route" active-class="border" color="#fff">
+                <v-list-item v-for="link in linksMainMenu" :key="link.text" router :to="link.route" active-class="border" color="#fff">
+                    <v-list-item-action>
+                        <v-icon color="#fff">{{link.icon}}</v-icon>
+                    </v-list-item-action>
+                    <v-list-item-content>
+                        <v-list-item-title class="white--text">{{link.text}}</v-list-item-title>
+                    </v-list-item-content>
+                </v-list-item>
+            </v-list>
+            <v-divider></v-divider>
+               <v-list text>
+                <v-list-item v-for="link in linksSetting" :key="link.text" router :to="link.route" active-class="border" color="#fff">
                     <v-list-item-action>
                         <v-icon color="#fff">{{link.icon}}</v-icon>
                     </v-list-item-action>
@@ -41,9 +53,11 @@
 export default {      
     data: ()=>({
         drawer:true,
-        links:[
-            {icon:'dashboard',text:'Dashboard',route:'/'},
-            {icon:'folder',text:'Trends',route:'/trends'},
+        linksMainMenu:[
+            {icon:'dashboard',text:'Dashboard',route:'/'},            
+        ],
+        linksSetting:[
+            {icon:'settings',text:'Setting',route:'/settings'}
         ],
         username:null,
     }),      

@@ -23,7 +23,7 @@
                 <v-list-item-subtitle class="white--text font-weight-medium">User Active</v-list-item-subtitle>
               </v-list-item-content>              
               <v-list-item-avatar size="90" tile class="mt-1">                
-                  <v-icon size="100" >person_add_alt_1</v-icon>                
+                  <v-icon size="100" >person</v-icon>                
               </v-list-item-avatar>
             </v-list-item>          
           </v-card>          
@@ -36,7 +36,7 @@
                  <v-list-item-subtitle class="white--text font-weight-medium">Monthly Visit</v-list-item-subtitle>
               </v-list-item-content>              
                 <v-list-item-avatar size="90" tile class="mt-1">                
-                  <v-icon size="100" >show_chart</v-icon>                
+                  <v-icon size="85" >add_to_home_screen</v-icon>                
               </v-list-item-avatar>
             </v-list-item>          
           </v-card>          
@@ -49,14 +49,14 @@
                 <v-list-item-subtitle class="white--text font-weight-medium">Monthly Transaction</v-list-item-subtitle>
               </v-list-item-content>              
                <v-list-item-avatar size="90" tile class="mt-1">                
-                  <v-icon size="100" >account_balance_wallet</v-icon>                
+                  <v-icon size="100" >payments</v-icon>                
               </v-list-item-avatar>
             </v-list-item>          
           </v-card>          
         </v-flex>                   
       </v-layout>    
     <v-layout row align-content-space-around>
-      <v-flex lg9 >        
+      <v-flex lg8 >        
         <v-container>
           <h2 class="subheading grey--text mb-4">Users location</h2>  
           <GmapMap
@@ -73,25 +73,37 @@
           </GmapMap>                             
         </v-container>     
         <v-container>
-          <h2 class="subheading grey--text mb-4">Mobile Version</h2>  
+          <h2 class="subheading grey--text mb-4">Mobile App Version Installed In</h2>  
           <v-card :loading="chartDataMobileVersion==null" elevation="3" class="pa-4">
-            <line-chart v-if="chartDataMobileVersion" class="mb-3" :height="110" :data="chartDataMobileVersion" :options="optionsLine" ></line-chart>                                        
+            <line-chart v-if="chartDataMobileVersion" class="mb-3" :height="110" :data="chartDataMobileVersion" :options="optionsMobileVersion" ></line-chart>                                        
             </v-card>         
         </v-container>     
     </v-flex>        
-    <v-flex lg3>       
+    <v-flex lg4>       
         <v-container>
-          <h2 class="subheading grey--text">Users Type</h2>
-          <v-card elevation="3" class="rounded-lg pa-4 mt-4" :loading="chartdataUserType==null">
-            <span v-if="hasilIncrementNewUser!='NaN' && hasilIncrementNewUser!='Infinity'"> {{hasilIncrementNewUser}}%</span>
-            <pie-chart v-if="chartdataUserType" :data="chartdataUserType" :options="optionsDonat"/>         
-          </v-card>
+          <h2 class="subheading grey--text">Users Type</h2>             
+          <v-card elevation="3" class="rounded-lg pa-4 mt-4" :loading="chartdataUserType==null">         
+            <v-container>
+              <v-row> 
+                <v-col  lg1 xl2 class="d-flex justify-center align-center">
+                  <span class="title" v-if="hasilIncrementNewUser!='NaN' && hasilIncrementNewUser!='Infinity'"> +{{hasilIncrementNewUser}}%</span>
+                </v-col>          
+                <v-col lg10 xl10>               
+                  <div style="position: relative; height:250; width:250px">
+                    <pie-chart v-if="chartdataUserType" :data="chartdataUserType" :options="optionsDonatUserType"/>                                     
+                  </div>
+                </v-col>
+              </v-row>
+              </v-container>           
+          </v-card>          
         </v-container>               
         <v-spacer></v-spacer>   
         <v-container>
           <h2 class="subheading grey--text">Mobile App Usage</h2>          
-          <v-card elevation="3" class="rounded-lg pa-4 mt-4" :loading="chartdataMobileType==null">
-            <pie-chart v-if="chartdataMobileType" :data="chartdataMobileType" :options="optionsDonat"/>            
+          <v-card elevation="3" class="rounded-lg pa-4 mt-4 d-flex justify-center" :loading="chartdataMobileType==null">
+            <div style="position: relative; height:250; width:250px">
+            <pie-chart v-if="chartdataMobileType" :data="chartdataMobileType" :options="optionsDonatMobileAppUsage" style=""/>     
+            </div>       
           </v-card>
         </v-container>                
         <v-spacer></v-spacer>   
@@ -143,39 +155,10 @@ export default {
       chartUserType: null, 
       chartMobileType: null, 
       chartMobileVersion:null,
-      optionsLine:{
-        scales:{
-          yAxes:[{
-            ticks:{
-              min:1,
-              callback: function(value) {if (value % 1 == 0) {return value;}},                            
-            }
-          }]
-        }
-      },
-      optionsDonat: {
-        plugins: {
-          datalabels: {
-            color: "#0f0f0f",
-            textAlign: "center",
-            font: {
-              weight: "bold",
-              size: 16
-            },
-            formatter: (value, ctx) => {
-                let sum = 0;
-                let dataArr = ctx.chart.data.datasets[0].data;
-                dataArr.map(data => {
-                    sum += data;
-                });
-                let percentage = (value*100 / sum).toFixed(2)+"%";
-                return percentage;
-            }
-          }
-        }, 
-        responsive: true,
-        maintainAspectRatio: true
-      }
+      optionsMobileVersion:null,
+      optionsDonatUserType: null,
+      optionsDonatMobileAppUsage: null,
+      refresh:this.$store.getters.getRefresh
     }
   },
   computed:{
@@ -215,6 +198,21 @@ export default {
           labels: ['January', 'February','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'],
           datasets:resp.data.data
         }
+        this.optionsMobileVersion={
+          title:{
+            display:true,
+            text:"Mobile App Version Installed In "+ new Date().getFullYear(),
+            position:"top"
+          },
+          scales:{
+            yAxes:[{
+              ticks:{
+                min:1,
+                callback: function(value) {if (value % 1 == 0) {return value;}},                            
+              }
+            }]
+        }
+      }
       }).catch(err=>{
         console.error(err)
       })
@@ -260,7 +258,33 @@ export default {
               backgroundColor: ['rgba(255, 99, 132, 0.5)','rgba(54, 162, 235, 0.2)']
             }
           ]
-        }        
+        }  
+        this.optionsDonatUserType={
+        legend:{
+          position:'bottom'
+        },
+        plugins: {
+          datalabels: {
+            color: "#0f0f0f",
+            textAlign: "center",
+            font: {
+              weight: "bold",
+              size: 16
+            },
+            formatter: (value, ctx) => {
+                let sum = 0;
+                let dataArr = ctx.chart.data.datasets[0].data;
+                dataArr.map(data => {
+                    sum += data;
+                });
+                let percentage = (value*100 / sum).toFixed(2)+"%";
+                return percentage;
+            }
+          }
+        }, 
+        responsive: true,
+        maintainAspectRatio: true
+      }      
       }).catch(err=>{
         console.error(err)
       })
@@ -276,21 +300,47 @@ export default {
               backgroundColor: ['rgba(255, 99, 132, 0.5)','rgba(54, 162, 235, 0.2)']
             }
           ]
-        }                        
+        } 
+        this.optionsDonatMobileAppUsage ={
+        legend:{
+          position:'bottom'
+        },
+        plugins: {
+          datalabels: {
+            color: "#0f0f0f",
+            textAlign: "center",
+            font: {
+              weight: "bold",
+              size: 16
+            },
+            formatter: (value, ctx) => {
+                let sum = 0;
+                let dataArr = ctx.chart.data.datasets[0].data;
+                dataArr.map(data => {
+                    sum += data;
+                });
+                let percentage = (value*100 / sum).toFixed(2)+"%";
+                return percentage;
+            }
+          }
+        }, 
+        responsive: true,
+        maintainAspectRatio: true
+      }                        
       }).catch(err=>{
         console.error(err)
       })
     },
-    runMethod:function(){ 
-      setInterval(()=>{
-        this.getUserLocation()
-        this.getUsertype()
+    runMethod:function(){       
+      setInterval(() => {   
+        console.count()     
         this.getMobileType()
-      }, 50000)
-      setInterval(() => {        
+        this.getUsertype() 
+        this.getUserLocation()
+        this.getCardData()        
         this.getActivitasUser()
-        this.getCardData()             
-      }, 5000);                          
+        this.getMobileAppVersion()
+      }, this.refresh);                          
     },    
     moment(date){
       return this.$moment(date).fromNow()
@@ -315,7 +365,8 @@ export default {
     this.getUserLocation()
     this.getCardData()        
     this.getActivitasUser()
-    this.getMobileAppVersion()    
+    this.getMobileAppVersion() 
+    this.runMethod()   
   },
    watch: {
     totalUser: function(newValue) {
