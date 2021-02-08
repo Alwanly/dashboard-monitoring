@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import BarChart from '../BarChart.js'
+import BarChart from '../plugins/BarChart.js'
 export default {
   components:{
     BarChart

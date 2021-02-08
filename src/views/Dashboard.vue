@@ -1,6 +1,6 @@
 <template>
   <div>        
-    <h1 class="subheading grey--text">Dashboard</h1>        
+    <h1 class="subheading grey--text">Dashboard {{idle}}</h1>        
       <v-layout row wrap >                                      
         <v-flex sm12 xs12 md3 lg3 xl3 >                    
           <v-card class="ma-3" color="blue">            
@@ -56,7 +56,7 @@
         </v-flex>                   
       </v-layout>    
     <v-layout row align-content-space-around>
-      <v-flex lg8 >        
+      <v-flex lg8 xl8>        
         <v-container>
           <h2 class="subheading grey--text mb-4">Users location</h2>  
           <GmapMap
@@ -79,7 +79,7 @@
             </v-card>         
         </v-container>     
     </v-flex>        
-    <v-flex lg4>       
+    <v-flex lg4 xl4>       
         <v-container>
           <h2 class="subheading grey--text">Users Type</h2>             
           <v-card elevation="3" class="rounded-lg pa-4 mt-4" :loading="chartdataUserType==null">         
@@ -89,7 +89,7 @@
                   <span class="title" v-if="hasilIncrementNewUser!='NaN' && hasilIncrementNewUser!='Infinity'"> +{{hasilIncrementNewUser}}%</span>
                 </v-col>          
                 <v-col lg10 xl10>               
-                  <div style="position: relative; height:250; width:250px">
+                  <div style="position: relative; height:230; width:230px">
                     <pie-chart v-if="chartdataUserType" :data="chartdataUserType" :options="optionsDonatUserType"/>                                     
                   </div>
                 </v-col>
@@ -101,7 +101,7 @@
         <v-container>
           <h2 class="subheading grey--text">Mobile App Usage</h2>          
           <v-card elevation="3" class="rounded-lg pa-4 mt-4 d-flex justify-center" :loading="chartdataMobileType==null">
-            <div style="position: relative; height:250; width:250px">
+            <div style="position: relative; height:230; width:230px">
             <pie-chart v-if="chartdataMobileType" :data="chartdataMobileType" :options="optionsDonatMobileAppUsage" style=""/>     
             </div>       
           </v-card>
@@ -132,8 +132,8 @@
 <script>
 import axios from 'axios';
 import {gsap} from 'gsap';
-import LineChart from '../LineChart.js'
-import PieChart from '../PieChart.js'
+import LineChart from '../plugins/LineChart.js'
+import PieChart from '../plugins/PieChart.js'
 export default {
   name: 'Home',
   components:{
@@ -162,6 +162,9 @@ export default {
     }
   },
   computed:{
+     idle(){
+      return this.$store.state.idleVue.isIdle;
+    },    
     itemCard: function(){
       return this.dataCard
     },

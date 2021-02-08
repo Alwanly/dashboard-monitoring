@@ -4,8 +4,7 @@
             <v-app-bar-nav-icon @click.stop="drawer = !drawer" class="white--text">
 
             </v-app-bar-nav-icon>
-            <v-toolbar-title class="text-uppercase">
-                <span class="font-weight-light">TOKOHAJI </span>
+            <v-toolbar-title class="text-uppercase">                
                 <span>Dashboard</span>
             </v-toolbar-title>
             <v-spacer></v-spacer>            
@@ -20,7 +19,7 @@
                     <v-avatar size="100">
                         <v-img src="/img1.png"></v-img>
                     </v-avatar>
-                    <p class="subheading mt-1 text-center white--text">{{username}}</p>
+                    <p class="subheading mt-1 text-center white--text">{{user}}</p>
                 </v-flex>
             </v-layout>
             <v-divider light></v-divider>
@@ -60,7 +59,12 @@ export default {
             {icon:'settings',text:'Setting',route:'/settings'}
         ],
         username:null,
-    }),      
+    }),
+    computed:{
+        user:function(){
+            return this.$store.state.user
+        }
+    },   
     methods:{
         logout:function(){
                 this.$store.dispatch('logout')
@@ -69,7 +73,7 @@ export default {
                 })          
         },
         getUser:function (){
-            this.username = sessionStorage.getItem('user')
+            this.username = this.$store.state.user.display_name
         }   
     },
     mounted(){

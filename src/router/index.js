@@ -4,23 +4,29 @@ import Login from '../views/Login.vue'
 import Dashboard from '../views/Dashboard.vue'
 import TrendsServices from '../views/TrensdServices.vue'
 import Home from '../views/Home.vue'
-import store from '../plugins/store.js';
 import PageSettigs from '../views/Settings.vue'
 Vue.use(VueRouter)
 const routes = [
   {
     path: '/login',
     name: 'Login',
-    component: Login
+    component: Login,
+    beforeEnter:(to,from,next)=>{
+      if(sessionStorage.getItem('token')){
+        next({path:'/'})
+      }else next()
+    }
   },
   {
     path:'',
     component:Home,
     beforeEnter:(to,from,next)=>{            
-      if(!store.state.status) {                        
+      if(!sessionStorage.getItem('token')) {                                
         next({path:'/login'})
       }
-      else next()
+      else{                 
+        next()
+      } 
     },    
     children:[     
       {
