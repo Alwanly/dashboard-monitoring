@@ -29,7 +29,7 @@
               </td>              
             <td class="pa-3" >    
               <label class="text-body-1">Option Waktu refresh :</label>                      
-              <v-radio-group  v-model="getOptRefresh" mandatory="true">
+              <v-radio-group  v-model="getOptRefresh" :mandatory="true">
                 <!-- <v-radio
                 v-for="opt in optionRefresh"
                 :key="opt.option"

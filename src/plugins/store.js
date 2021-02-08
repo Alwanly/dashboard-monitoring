@@ -17,7 +17,8 @@ export default new Vuex.Store({
             {option:1,label:'1 Menit',value:60000},
             {option:2,label:'3 Menit',value:180000},
             {option:3,label:'5 Menit',value:300000},
-        ]       
+        ],
+        varInterval:null,       
     },
     actions:{
         login({commit}, user){
@@ -57,15 +58,21 @@ export default new Vuex.Store({
                 commit('logout')                                
                 sessionStorage.removeItem('token')                                                                            
                 sessionStorage.removeItem('user')                                                                            
-                delete axios.defaults.headers.common['Authorization']                
+                delete axios.defaults.headers.common['Authorization']  
+                clearInterval(this.state.varInterval)              
                 resolve()                
             })
         },
         saveRefreshTime({commit},refreshTime){
             return new Promise((resolve)=>{
-                console.log(refreshTime);
+                // console.log(refreshTime);
                 commit('saveRefreshTime',refreshTime)                                
                 resolve()
+            })
+        },
+        setRefresh({commit},{timer}){
+            return new Promise(()=>{
+                commit('setVarInterval',timer)
             })
         }
         
@@ -91,6 +98,10 @@ export default new Vuex.Store({
         saveRefreshTime(state,time){
             sessionStorage.setItem('refresh',time)
             state.refresh = time            
+        },
+        setVarInterval(state,timer){
+            console.log(timer)
+            state.varInterval = timer
         }
     },
     getters:{        
