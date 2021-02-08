@@ -12,7 +12,7 @@ export default new Vuex.Store({
         status: false,
         token: sessionStorage.getItem('token') || '',
         user: sessionStorage.getItem('user')||'',
-        refresh: sessionStorage.getItem('refresh') || 180000,
+        refresh: sessionStorage.getItem('refresh') || 60000,
         optionRefresh:[
             {option:1,label:'1 Menit',value:60000},
             {option:2,label:'3 Menit',value:180000},
@@ -44,7 +44,7 @@ export default new Vuex.Store({
                         user : resp.data.data.display_name,
                         token : this.state.token
                     } 
-                    sessionStorage.setItem('user',data.user.display_name)
+                    sessionStorage.setItem('user',data.user)
                     commit('auth_success',data)                                            
                     resolve(resp)
                 }).catch(err=>{                    
@@ -56,6 +56,7 @@ export default new Vuex.Store({
             return new Promise((resolve)=>{
                 commit('logout')                                
                 sessionStorage.removeItem('token')                                                                            
+                sessionStorage.removeItem('user')                                                                            
                 delete axios.defaults.headers.common['Authorization']                
                 resolve()                
             })

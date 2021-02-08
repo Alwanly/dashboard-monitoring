@@ -29,7 +29,7 @@
               </td>              
             <td class="pa-3" >    
               <label class="text-body-1">Option Waktu refresh :</label>                      
-              <v-radio-group  v-model="getOptRefresh" :mandatory="false">
+              <v-radio-group  v-model="getOptRefresh" mandatory="true">
                 <!-- <v-radio
                 v-for="opt in optionRefresh"
                 :key="opt.option"
@@ -41,8 +41,8 @@
                     <v-radio  :label="opt.label"
                 :value="opt.value"></v-radio>                          
                   </div>    -->
-                  <v-radio value="60000" label="1 Menit"></v-radio>
-                  <v-radio value="180000" label="3 Menit (default)"></v-radio>
+                  <v-radio value="60000" label="1 Menit (default)"></v-radio>
+                  <v-radio value="180000" label="3 Menit"></v-radio>
                   <v-radio value="300000" label="5 Menit"></v-radio>
               </v-radio-group>
               <v-btn elevation="2" color="success" depressed @click="saveRefreshTime">Save</v-btn>   
@@ -60,7 +60,7 @@ export default {
   },
   data(){
     return {
-      getOptRefresh:null,
+      getOptRefresh:this.$store.state.refresh,
       loading:false,
       snackbar:false,
       message:'',
@@ -70,7 +70,7 @@ export default {
   computed:{    
     optionRefresh:function(){
       return this.$store.state.optionRefresh
-    }    
+    },    
   },
   methods:{
     saveRefreshTime:function(){
@@ -90,13 +90,7 @@ export default {
         this.color= "error"
         this.snackbar = true
       })            
-    },
-    setOptRefres:function(){
-      this.getOptRefresh =  this.$store.state.refresh
     }
-  },
-  mounted(){
-    this.setOptRefres()
   }
 }
 </script>
