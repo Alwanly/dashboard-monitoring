@@ -1,6 +1,6 @@
 <template>
   <div>        
-    <h1 class="subheading grey--text">Dashboard {{idle}}</h1>        
+    <h1 class="subheading grey--text">Dashboard</h1>        
       <v-layout row wrap >                                      
         <v-flex sm12 xs12 md3 lg3 xl3 >                    
           <v-card class="ma-3" color="blue">            
@@ -161,10 +161,7 @@ export default {
       refresh:this.$store.getters.getRefresh
     }
   },
-  computed:{
-     idle(){
-      return this.$store.state.idleVue.isIdle;
-    },    
+  computed:{  
     itemCard: function(){
       return this.dataCard
     },
@@ -335,15 +332,15 @@ export default {
       })
     },
     runMethod:function(){       
-      setInterval(() => {   
-        console.count()     
+      const  timer = setInterval(() => {           
         this.getMobileType()
         this.getUsertype() 
         this.getUserLocation()
         this.getCardData()        
         this.getActivitasUser()
         this.getMobileAppVersion()
-      }, this.refresh);                          
+      }, this.refresh);                                
+      this.$store.dispatch('setRefresh',{timer})      
     },    
     moment(date){
       return this.$moment(date).fromNow()
@@ -375,9 +372,7 @@ export default {
     totalUser: function(newValue) {
       gsap.to(this.$data, { duration: 0.5, increseTotalUser: newValue });
     },
-
   }
-  
 }
 </script>
 <style scoped>
