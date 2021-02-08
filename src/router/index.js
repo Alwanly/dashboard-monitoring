@@ -17,8 +17,7 @@ const routes = [
     path:'',
     component:Home,
     beforeEnter:(to,from,next)=>{            
-      if(!store.state.status) {     
-        alert("belum login")           
+      if(!store.state.status) {                        
         next({path:'/login'})
       }
       else next()

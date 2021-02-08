@@ -17,7 +17,8 @@ Vue.use(VueGoogleMaps,{
 Vue.component('GmapCluster',GmapCluster);
 Vue.prototype.$http = Axios;
 Vue.config.productionTip = false;
-const base_url = "http://127.0.0.1:8000/api/";
+const base_url = process.env.VUE_APP_API;
+console.log(base_url);
 Axios.defaults.baseURL = base_url;
 if(store.state.status){
   Axios.defaults.headers.common['Authorization'] = store.state.token  

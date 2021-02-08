@@ -5,7 +5,7 @@ import axios from 'axios'
 
 Vue.use(Vuex)
 
-const base_url = "http://127.0.0.1:8000/api/";
+const base_url = process.env.VUE_APP_API;
 var optionAxios = {
     headers: {
         'Access-Control-Allow-Origin': '*',
