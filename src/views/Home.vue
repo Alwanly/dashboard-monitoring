@@ -10,7 +10,6 @@
         <Footer/>
     </v-app>    
 </template>
-
 <script>
 import ModalIdle from '@/components/ModalSession'
 import Navbar from '@/components/NavBar'
@@ -28,7 +27,6 @@ export default {
   }
 }
 </script>
-
 <style lang="scss">
 
 </style>
