@@ -90,7 +90,6 @@
 </template>
 <script>
 import axios from 'axios';
-import {gsap} from 'gsap';
 import LineChart from '../plugins/LineChart.js'
 import PieChart from '../plugins/PieChart.js'
 import CardView from '@/components/CardView'
@@ -137,12 +136,6 @@ export default {
     },
     tabledataLastActiveUser(){
       return this.activitasUser
-    },
-     CurrentMoney: function() {
-      return this.increaseMoney.toFixed(0);
-    },
-    priceIdr(){
-      return this.rupiah    
     },
     chartDataMobileVersion(){
       return this.chartMobileVersion
@@ -321,11 +314,6 @@ export default {
     this.getMobileAppVersion() 
     this.runMethod()   
   },
-   watch: {
-    totalTransaction: function(newValue) {
-      gsap.to(this.$data, { duration: 0.5, increaseMoney: newValue });
-    },
-  }
 }
 </script>
 <style scoped>
