@@ -12,17 +12,7 @@
            <card-view color="red" icon="add_to_home_screen" :value="monthlyVisit" label="Monthly Visit" />            
         </v-flex>  
          <v-flex sm12 xs12 md3 lg3 xl3 >                    
-          <v-card class="ma-3" color="blue">            
-            <v-list-item>             
-              <v-list-item-content>                
-                <v-list-item-title class="mb-1 white--text text-h5 font-weight-bold">Rp {{rupiah(CurrentMoney)}}</v-list-item-title>                                
-                <v-list-item-subtitle class="white--text font-weight-light">Monthly Transaction</v-list-item-subtitle>
-              </v-list-item-content>              
-               <v-list-item-avatar size="90" tile class="mt-1">                
-                  <v-icon size="100" >payments</v-icon>                
-              </v-list-item-avatar>
-            </v-list-item>          
-          </v-card>                              
+           <card-view color="blue" icon="payments" :value="totalTransaction" label="Monthly Transaction" :currency="true"/>                                       
         </v-flex>                   
       </v-layout>    
     <v-layout row align-content-space-around>
@@ -315,14 +305,6 @@ export default {
     },    
     moment(date){
       return this.$moment(date).fromNow()
-    },
-    rupiah(bilangan){      
-      var	number_string = bilangan.toString(),sisa 	= number_string.length % 3,rupiah 	= number_string.substr(0, sisa),ribuan 	= number_string.substr(sisa).match(/\d{3}/g);
-      if (ribuan) {
-        var separator = sisa ? '.' : '';
-        rupiah += separator + ribuan.join('.');
-        }  
-    return rupiah  
     } ,
     incrementNewUser(){   
       let hasil = 0
