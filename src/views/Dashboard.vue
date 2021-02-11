@@ -3,56 +3,16 @@
     <h1 class="subheading grey--text">Dashboard</h1>        
       <v-layout row wrap >                                      
         <v-flex sm12 xs12 md3 lg3 xl3 >                    
-          <v-card class="ma-3" color="blue">            
-            <v-list-item>
-              <v-list-item-content class="text-left">                
-                <v-list-item-title class="mb-1 white--text text-h4 font-weight-bold">{{animatedNumber}}</v-list-item-title>                
-                <v-list-item-subtitle class="white--text font-weight-medium">Total Users</v-list-item-subtitle> 
-              </v-list-item-content>   
-              <v-list-item-avatar size="90" tile class="mt-1">                
-                  <v-icon size="100" >groups</v-icon>                
-              </v-list-item-avatar>                       
-            </v-list-item>          
-          </v-card>          
+          <card-view color="blue" icon="groups" :value="totalUser" label="Total User" />
         </v-flex>    
-         <v-flex sm12 xs12 md3 lg3 xl3   >                    
-          <v-card class="ma-3" color="green">            
-            <v-list-item>              
-              <v-list-item-content>                
-                <v-list-item-title class="mb-1 white--text text-h4 font-weight-bold">{{totalUserActive}}</v-list-item-title>                
-                <v-list-item-subtitle class="white--text font-weight-medium">User Active</v-list-item-subtitle>
-              </v-list-item-content>              
-              <v-list-item-avatar size="90" tile class="mt-1">                
-                  <v-icon size="100" >person</v-icon>                
-              </v-list-item-avatar>
-            </v-list-item>          
-          </v-card>          
+         <v-flex sm12 xs12 md3 lg3 xl3   >                      
+          <card-view color="green" icon="person" :value="totalUserActive" label="User Active" />       
+        </v-flex>  
+         <v-flex sm12 xs12 md3 lg3 xl3 >                            
+           <card-view color="red" icon="add_to_home_screen" :value="monthlyVisit" label="Monthly Visit" />            
         </v-flex>  
          <v-flex sm12 xs12 md3 lg3 xl3 >                    
-          <v-card class="ma-3" color="red">            
-            <v-list-item>            
-              <v-list-item-content>               
-                <v-list-item-title class="mb-1 white--text text-h4 font-weight-bold">{{monthlyVisit}}</v-list-item-title>                                 
-                 <v-list-item-subtitle class="white--text font-weight-medium">Monthly Visit</v-list-item-subtitle>
-              </v-list-item-content>              
-                <v-list-item-avatar size="90" tile class="mt-1">                
-                  <v-icon size="85" >add_to_home_screen</v-icon>                
-              </v-list-item-avatar>
-            </v-list-item>          
-          </v-card>          
-        </v-flex>  
-         <v-flex sm12 xs12 md3 lg3 xl3 >                    
-          <v-card class="ma-3" color="blue">            
-            <v-list-item>             
-              <v-list-item-content>                
-                <v-list-item-title class="mb-1 white--text text-h4 font-weight-bold">Rp.{{rupiah(totalTransaction)}}</v-list-item-title>                                
-                <v-list-item-subtitle class="white--text font-weight-medium">Monthly Transaction</v-list-item-subtitle>
-              </v-list-item-content>              
-               <v-list-item-avatar size="90" tile class="mt-1">                
-                  <v-icon size="100" >payments</v-icon>                
-              </v-list-item-avatar>
-            </v-list-item>          
-          </v-card>          
+           <card-view color="blue" icon="payments" :value="totalTransaction" label="Monthly Transaction" :currency="true"/>                                       
         </v-flex>                   
       </v-layout>    
     <v-layout row align-content-space-around>
@@ -128,17 +88,18 @@
     </v-layout>
   </div>
 </template>
-
 <script>
 import axios from 'axios';
 import {gsap} from 'gsap';
 import LineChart from '../plugins/LineChart.js'
 import PieChart from '../plugins/PieChart.js'
+import CardView from '@/components/CardView'
 export default {
   name: 'Home',
   components:{
     LineChart,    
-    PieChart
+    PieChart,
+    CardView
   },  
   data (){
     return{
@@ -146,7 +107,7 @@ export default {
       loading:false,         
       activitasUser:null, 
       newUserThisMonth:0,           
-      increseTotalUser:0,
+      increaseMoney:0,
       totalUser:0,
       totalUserActive:0,
       monthlyVisit:0,
@@ -177,8 +138,8 @@ export default {
     tabledataLastActiveUser(){
       return this.activitasUser
     },
-     animatedNumber: function() {
-      return this.increseTotalUser.toFixed(0);
+     CurrentMoney: function() {
+      return this.increaseMoney.toFixed(0);
     },
     priceIdr(){
       return this.rupiah    
@@ -344,14 +305,6 @@ export default {
     },    
     moment(date){
       return this.$moment(date).fromNow()
-    },
-    rupiah(bilangan){      
-      var	number_string = bilangan.toString(),sisa 	= number_string.length % 3,rupiah 	= number_string.substr(0, sisa),ribuan 	= number_string.substr(sisa).match(/\d{3}/g);
-      if (ribuan) {
-        var separator = sisa ? '.' : '';
-        rupiah += separator + ribuan.join('.');
-        }  
-    return rupiah  
     } ,
     incrementNewUser(){   
       let hasil = 0
@@ -369,12 +322,11 @@ export default {
     this.runMethod()   
   },
    watch: {
-    totalUser: function(newValue) {
-      gsap.to(this.$data, { duration: 0.5, increseTotalUser: newValue });
+    totalTransaction: function(newValue) {
+      gsap.to(this.$data, { duration: 0.5, increaseMoney: newValue });
     },
   }
 }
 </script>
 <style scoped>
-  
 </style>

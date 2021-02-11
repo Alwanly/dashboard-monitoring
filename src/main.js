@@ -20,7 +20,7 @@ if(token){
 Vue.use(IdleVue, {
   eventEmitter: eventsHub,
   store,
-  idleTime: 60000,
+  idleTime: 18000,
   startAtIdle: false
 });
 Vue.use(VueGoogleMaps,{
