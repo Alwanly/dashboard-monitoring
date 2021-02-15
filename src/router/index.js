@@ -5,29 +5,21 @@ import Dashboard from '../views/Dashboard.vue'
 import TrendsServices from '../views/TrensdServices.vue'
 import Home from '../views/Home.vue'
 import PageSettigs from '../views/Settings.vue'
+import {Services} from '../services'
 Vue.use(VueRouter)
 const routes = [
   {
     path: '/login',
     name: 'Login',
     component: Login,
-    beforeEnter:(to,from,next)=>{
-      if(sessionStorage.getItem('token')){
-        next({path:'/'})
-      }else next()
+    meta:{
+      public:true,
+      onlyWhenLoggedOut:true
     }
   },
   {
     path:'',
-    component:Home,
-    beforeEnter:(to,from,next)=>{            
-      if(!sessionStorage.getItem('token')) {                                
-        next({path:'/login'})
-      }
-      else{                 
-        next()
-      } 
-    },    
+    component:Home,   
     children:[     
       {
         path: '/',
@@ -53,5 +45,26 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes
 })
+
+router.beforeEach((to, from, next) => {
+  const isPublic = to.matched.some(record => record.meta.public)
+  const onlyWhenLoggedOut = to.matched.some(record => record.meta.onlyWhenLoggedOut)
+  const loggedIn = !!Services.getToken();
+
+  if (!isPublic && !loggedIn) {
+    return next({
+      path:'/login',
+      query: {redirect: to.fullPath}  // Store the full path to redirect the user to after login
+    });
+  }
+
+  // Do not allow user to visit login page or register page if they are logged in
+  if (loggedIn && onlyWhenLoggedOut) {
+    return next('/')
+  }
+
+  next();
+})
+
 
 export default router

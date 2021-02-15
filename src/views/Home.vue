@@ -8,6 +8,7 @@
             </v-slide-x-transition>
         </v-main>          
         <Footer/>
+  
     </v-app>    
 </template>
 <script>
@@ -23,7 +24,7 @@ export default {
   },computed:{
     idle:function(){
       return this.$store.state.idleVue.isIdle
-    }
+    },
   }
 }
 </script>

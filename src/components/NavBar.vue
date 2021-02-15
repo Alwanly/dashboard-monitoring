@@ -62,22 +62,13 @@ export default {
     }),
     computed:{
         user:function(){
-            return this.$store.state.user
+            return this.$store.state.auth.userProfile
         }
     },   
     methods:{
         logout:function(){
-                this.$store.dispatch('logout')
-                .then(()=>{
-                    this.$router.push('/login')
-                })          
-        },
-        getUser:function (){
-            this.username = this.$store.state.user.display_name
-        }   
-    },
-    mounted(){
-        this.getUser()
+                this.$store.dispatch('auth/logout')                   
+        } 
     }
 }
 </script>

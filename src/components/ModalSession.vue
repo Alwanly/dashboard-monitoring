@@ -7,7 +7,7 @@
         <v-card>
             <v-card-title>Session Expired</v-card-title>
             <v-card-text>
-                You have left this browser for {{timeIdle(time)}}
+                You have left this browser
             </v-card-text>
             <v-card-actions>
                 <v-spacer></v-spacer>
@@ -27,21 +27,12 @@ export default {
     },
     data(){
         return {
-            dialog:false,
-            time:this.$store.getters.getRefresh,
-            refreshOpt:this.$store.getters.optionRefresh
+            dialog:false,        
         }
     },
     methods:{
-        timeIdle:function(time){
-            let getminute = this.refreshOpt.find(arr => arr.value == time)                                    
-            return getminute.label
-        },
          logout:function(){
-                this.$store.dispatch('logout')
-                .then(()=>{
-                    this.$router.push('/login')
-                })          
+                this.$store.dispatch('auth/logout')                 
         },
     },
     watch:{

@@ -60,7 +60,7 @@
                 <v-btn
                   dark
                   text
-                  @click="snackbar = false"
+                  @click="closeSnackBar"
                 >
                   Close
                 </v-btn>
@@ -78,31 +78,27 @@ export default {
   data: function () {
     return {
       username: '',
-      password: '',
-      errorMessages: 'Incorrect login info',
-      snackbar: false,
+      password: '',     
       color: 'general',
-      showPassword: false,
-      loading: false
+      showPassword: false,  
     }
+  },
+  computed:{
+    errorMessages:function (){
+       return this.$store.state.auth.messageError
+    },
+    snackbar:function(){ return this.$store.state.auth.messageError ? true : false},
+     loading: function(){ return this.$store.state.auth.authenticating}
   },
   // Sends action to Vuex that will log you in and redirect to the dash otherwise, error
   methods: {
     login: function () {
       let login = this.username
-      let password = this.password  
-      this.loading = true    
-      this.$store.dispatch('login', { login, password })
-        .then(() =>{
-          this.$router.push('/')
-          this.loading = false
-        } )
-        .catch(err => {
-          console.log(err)
-          this.snackbar = true
-          this.loading = false
-        }
-        )
+      let password = this.password          
+      this.$store.dispatch('auth/login', { login, password })                     
+    },
+    closeSnackBar:function(){
+      this.$store.dispatch('auth/closeMessageError')      
     }
   },
   metaInfo () {

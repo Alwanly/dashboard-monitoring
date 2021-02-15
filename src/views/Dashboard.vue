@@ -118,7 +118,7 @@ export default {
       optionsMobileVersion:null,
       optionsDonatUserType: null,
       optionsDonatMobileAppUsage: null,
-      refresh:this.$store.getters.getRefresh
+      refresh:this.$store.state.settings.refresh
     }
   },
   computed:{  
@@ -294,7 +294,7 @@ export default {
         this.getActivitasUser()
         this.getMobileAppVersion()
       }, this.refresh);                                
-      this.$store.dispatch('setRefresh',{timer})      
+      this.$store.dispatch('settings/intervalIdAPI',timer)      
     },    
     moment(date){
       return this.$moment(date).fromNow()
@@ -311,8 +311,8 @@ export default {
     this.getUserLocation()
     this.getCardData()        
     this.getActivitasUser()
-    this.getMobileAppVersion() 
-    this.runMethod()   
+    this.getMobileAppVersion()
+    this.runMethod() 
   },
 }
 </script>
