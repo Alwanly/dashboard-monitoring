@@ -9,7 +9,7 @@ const state ={
     data_chart_mobile_version:null,
     data_chart_mobile_type:null,
     activitas_user:null,
-}
+};
 
 const actions = {
     async getTotalUser({commit}){
