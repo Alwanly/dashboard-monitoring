@@ -6,22 +6,22 @@ import store from "./store";
 import * as VueGoogleMaps from "vue2-google-maps";
 import GmapCluster from "vue2-google-maps/dist/components/cluster";
 import moment from "./plugins/moments";
-import IdleVue from "idle-vue";
+// import IdleVue from "idle-vue";
 import { Services, ApiServices } from "./services";
 
-const eventsHub = new Vue();
+// const eventsHub = new Vue();
 
 ApiServices.init(process.env.VUE_APP_API);
 if (Services.getToken()) {
   ApiServices.setHeader();
 }
 
-Vue.use(IdleVue, {
-  eventEmitter: eventsHub,
-  store,
-  idleTime: 120000,
-  startAtIdle: false,
-});
+// Vue.use(IdleVue, {
+//   eventEmitter: eventsHub,
+//   store,
+//   idleTime: 120000,
+//   startAtIdle: false,
+// });
 
 Vue.use(VueGoogleMaps, {
   load: {

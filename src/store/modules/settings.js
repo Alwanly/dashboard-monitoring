@@ -1,7 +1,7 @@
 import { Services } from "../../services";
 
 const state = {
-  refresh: Services.getTimerAPI(),
+  refresh: Services.getTimerAPI() || 180000,
   idle: Services.getIdleTime() || 120000,
   optionRefresh: [
     { option: 1, label: "3 Menit", value: 180000 },
@@ -36,10 +36,15 @@ const mutations = {
     state.idle = time;
   },
 };
+const getters ={
+  getRefresh:(state) => state.refresh,
+  getIntervalAPIId:(state) => state.intervalId
+}
 
 export const settings = {
   namespaced: true,
   state,
   actions,
   mutations,
+  getters
 };

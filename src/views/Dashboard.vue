@@ -6,7 +6,7 @@
         <card-view
           color="blue"
           icon="groups"
-          :value="totalUser"
+          :value="displayTotalUser"
           label="Total User"
         />
       </v-flex>
@@ -14,7 +14,7 @@
         <card-view
           color="green"
           icon="person"
-          :value="totalUserActive"
+          :value="displayUsersActive"
           label="User Active"
         />
       </v-flex>
@@ -22,7 +22,7 @@
         <card-view
           color="red"
           icon="add_to_home_screen"
-          :value="monthlyVisit"
+          :value="displayMonthlyVisit"
           label="Monthly Visit"
         />
       </v-flex>
@@ -30,7 +30,7 @@
         <card-view
           color="blue"
           icon="payments"
-          :value="totalTransaction"
+          :value="displayMonthlyTransaction"
           label="Monthly Transaction"
           :currency="true"
         />
@@ -48,7 +48,7 @@
             <GmapCluster>
               <GmapMarker
                 :key="index"
-                v-for="(m, index) in markers"
+                v-for="(m, index) in displayUsersLocation"
                 :position="m.position"
               />
             </GmapCluster>
@@ -59,16 +59,16 @@
             Mobile App Version Installed In
           </h2>
           <v-card
-            :loading="chartDataMobileVersion == null"
+            :loading="dataChartMobileAppVer.datas == null"
             elevation="3"
             class="pa-4"
           >
             <line-chart
-              v-if="chartDataMobileVersion"
+              v-if="dataChartMobileAppVer.datas"
               class="mb-3"
               :height="110"
-              :data="chartDataMobileVersion"
-              :options="optionsMobileVersion"
+              :data="dataChartMobileAppVer.datas"
+              :options="dataChartMobileAppVer.options"
             ></line-chart>
           </v-card>
         </v-container>
@@ -79,27 +79,21 @@
           <v-card
             elevation="3"
             class="rounded-lg pa-4 mt-4"
-            :loading="chartdataUserType == null"
+            :loading="dataChartUsersType.datas == null"
           >
             <v-container>
               <v-row>
                 <v-col lg1 xl2 class="d-flex justify-center align-center">
-                  <span
-                    class="title"
-                    v-if="
-                      hasilIncrementNewUser != 'NaN' &&
-                      hasilIncrementNewUser != 'Infinity'
-                    "
-                  >
-                    +{{ hasilIncrementNewUser }}%</span
+                  <span class="title" v-if="dataChartUsersType.datas">
+                    +{{ displayPrecentaceNewUser }}%</span
                   >
                 </v-col>
                 <v-col lg10 xl10>
                   <div style="position: relative; height: 230; width: 230px">
                     <pie-chart
-                      v-if="chartdataUserType"
-                      :data="chartdataUserType"
-                      :options="optionsDonatUserType"
+                      v-if="dataChartUsersType.datas"
+                      :data="dataChartUsersType.datas"
+                      :options="dataChartUsersType.options"
                     />
                   </div>
                 </v-col>
@@ -113,13 +107,13 @@
           <v-card
             elevation="3"
             class="rounded-lg pa-4 mt-4 d-flex justify-center"
-            :loading="chartdataMobileType == null"
+            :loading="dataChartMobileType.datas == null"
           >
             <div style="position: relative; height: 230; width: 230px">
               <pie-chart
-                v-if="chartdataMobileType"
-                :data="chartdataMobileType"
-                :options="optionsDonatMobileAppUsage"
+                v-if="dataChartMobileType.datas"
+                :data="dataChartMobileType.datas"
+                :options="dataChartMobileType.options"
                 style=""
               />
             </div>
@@ -129,7 +123,7 @@
         <v-container>
           <h2 class="subheading grey--text mb-4">Last Active</h2>
           <div
-            v-for="item in tabledataLastActiveUser"
+            v-for="item in displayLastActiveUsers"
             v-bind:key="item.created_at"
           >
             <v-card class="ma-3">
@@ -157,7 +151,6 @@
   </div>
 </template>
 <script>
-import axios from "axios";
 import LineChart from "../plugins/LineChart.js";
 import PieChart from "../plugins/PieChart.js";
 import CardView from "@/components/CardView";
@@ -168,263 +161,67 @@ export default {
     PieChart,
     CardView,
   },
-  data() {
-    return {
-      map: null,
-      loading: false,
-      activitasUser: null,
-      newUserThisMonth: 0,
-      increaseMoney: 0,
-      totalUser: 0,
-      totalUserActive: 0,
-      monthlyVisit: 0,
-      totalTransaction: 0,
-      marker: [],
-      chartUserType: null,
-      chartMobileType: null,
-      chartMobileVersion: null,
-      optionsMobileVersion: null,
-      optionsDonatUserType: null,
-      optionsDonatMobileAppUsage: null,
-      refresh: this.$store.state.settings.refresh,
-    };
-  },
-  computed: {
-    itemCard: function () {
-      return this.dataCard;
-    },
-    markers() {
-      return this.marker;
-    },
-    chartdataUserType() {
-      return this.chartUserType;
-    },
-    chartdataMobileType() {
-      return this.chartMobileType;
-    },
-    tabledataLastActiveUser() {
-      return this.activitasUser;
-    },
-    chartDataMobileVersion() {
-      return this.chartMobileVersion;
-    },
-    hasilIncrementNewUser() {
-      return this.incrementNewUser();
-    },
-  },
   methods: {
-    getMobileAppVersion: function () {
-      axios
-        .get("users/mobile/app")
-        .then((resp) => {
-          this.chartMobileVersion = {
-            labels: [
-              "January",
-              "February",
-              "Maret",
-              "April",
-              "Mei",
-              "Juni",
-              "Juli",
-              "Agustus",
-              "September",
-              "Oktober",
-              "November",
-              "Desember",
-            ],
-            datasets: resp.data.data,
-          };
-          this.optionsMobileVersion = {
-            title: {
-              display: true,
-              text:
-                "Mobile App Version Installed In " + new Date().getFullYear(),
-              position: "top",
-            },
-            scales: {
-              yAxes: [
-                {
-                  ticks: {
-                    min: 1,
-                    callback: function (value) {
-                      if (value % 1 == 0) {
-                        return value;
-                      }
-                    },
-                  },
-                },
-              ],
-            },
-          };
-        })
-        .catch((err) => {
-          console.error(err);
-        });
+    fetchAll() {
+      this.$store.dispatch("dashboard/fetchTotalUsers");
+      this.$store.dispatch("dashboard/fetchUsersActive");
+      this.$store.dispatch("dashboard/fetchMonthlyVisit");
+      this.$store.dispatch("dashboard/fetchMonthlyTransaction");
+      this.$store.dispatch("dashboard/fetchUsersLocation");
+      this.$store.dispatch("dashboard/fetchMobileAppVersion");
+      this.$store.dispatch("dashboard/fetchLastActiveUsers");
+      this.$store.dispatch("dashboard/fetchUsersType");
+      this.$store.dispatch("dashboard/fetchMobileType");
     },
-    getActivitasUser: function () {
-      axios
-        .get("users/aktivitas")
-        .then((resp) => {
-          this.activitasUser = resp.data.data;
-        })
-        .catch((err) => console.log(err));
-    },
-    getCardData: function () {
-      axios
-        .all([
-          axios.get("users/total"),
-          axios.get("users/aktif"),
-          axios.get("users/visitor"),
-          axios.get("users/transaction"),
-        ])
-        .then(
-          axios.spread((total, aktif, visitor, transaction) => {
-            this.totalUser = total.data.total_user;
-            this.totalUserActive = aktif.data.total_user_aktif;
-            this.monthlyVisit = visitor.data.user_visit;
-            this.totalTransaction = transaction.data.this_month_total;
-          })
-        )
-        .catch((err) => {
-          console.error(err);
-        });
-    },
-    getUserLocation: function () {
-      axios
-        .get("users/location")
-        .then((resp) => {
-          this.marker = resp.data.data;
-        })
-        .catch((err) => {
-          console.error(err);
-        });
-    },
-    getUsertype: function () {
-      axios
-        .get("users/type")
-        .then((resp) => {
-          this.newUserThisMonth = resp.data.new_user;
-          this.chartUserType = {
-            labels: ["New User", "Existing User"],
-            datasets: [
-              {
-                data: [resp.data.new_user, resp.data.exiting_user],
-                backgroundColor: [
-                  "rgba(255, 99, 132, 0.5)",
-                  "rgba(54, 162, 235, 0.2)",
-                ],
-              },
-            ],
-          };
-          this.optionsDonatUserType = {
-            legend: {
-              position: "bottom",
-            },
-            plugins: {
-              datalabels: {
-                color: "#0f0f0f",
-                textAlign: "center",
-                font: {
-                  weight: "bold",
-                  size: 16,
-                },
-                formatter: (value, ctx) => {
-                  let sum = 0;
-                  let dataArr = ctx.chart.data.datasets[0].data;
-                  dataArr.map((data) => {
-                    sum += data;
-                  });
-                  let percentage = ((value * 100) / sum).toFixed(2) + "%";
-                  return percentage;
-                },
-              },
-            },
-            responsive: true,
-            maintainAspectRatio: true,
-          };
-        })
-        .catch((err) => {
-          console.error(err);
-        });
-    },
-    getMobileType: function () {
-      axios
-        .get("users/mobile/usage")
-        .then((resp) => {
-          this.chartMobileType = {
-            labels: [resp.data.data[0].os, resp.data.data[1].os],
-            datasets: [
-              {
-                data: [
-                  resp.data.data[0].total_user,
-                  resp.data.data[1].total_user,
-                ],
-                backgroundColor: [
-                  "rgba(255, 99, 132, 0.5)",
-                  "rgba(54, 162, 235, 0.2)",
-                ],
-              },
-            ],
-          };
-          this.optionsDonatMobileAppUsage = {
-            legend: {
-              position: "bottom",
-            },
-            plugins: {
-              datalabels: {
-                color: "#0f0f0f",
-                textAlign: "center",
-                font: {
-                  weight: "bold",
-                  size: 16,
-                },
-                formatter: (value, ctx) => {
-                  let sum = 0;
-                  let dataArr = ctx.chart.data.datasets[0].data;
-                  dataArr.map((data) => {
-                    sum += data;
-                  });
-                  let percentage = ((value * 100) / sum).toFixed(2) + "%";
-                  return percentage;
-                },
-              },
-            },
-            responsive: true,
-            maintainAspectRatio: true,
-          };
-        })
-        .catch((err) => {
-          console.error(err);
-        });
-    },
-    runMethod: function () {
-      const timer = setInterval(() => {
-        this.getMobileType();
-        this.getUsertype();
-        this.getUserLocation();
-        this.getCardData();
-        this.getActivitasUser();
-        this.getMobileAppVersion();
-      }, this.refresh);
-      this.$store.dispatch("settings/intervalIdAPI", timer);
+    autoRefresh() {
+      const setTime = setInterval(() => {
+        this.fetchAll();
+      }, this.$store.getters["settings/getRefresh"]);
+      this.$store.dispatch("settings/intervalIdAPI", setTime);
     },
     moment(date) {
       return this.$moment(date).fromNow();
     },
-    incrementNewUser() {
-      let hasil = 0;
-      hasil = ((this.newUserThisMonth * 100) / this.totalUser).toFixed(2);
-      return hasil;
-    },
   },
   mounted() {
-    this.getMobileType();
-    this.getUsertype();
-    this.getUserLocation();
-    this.getCardData();
-    this.getActivitasUser();
-    this.getMobileAppVersion();
-    this.runMethod();
+    this.fetchAll();
+    this.autoRefresh();
+  },
+  computed: {
+    displayTotalUser() {
+      return this.$store.getters["dashboard/getTotalUsers"];
+    },
+    displayUsersActive() {
+      return this.$store.getters["dashboard/getUsersActive"];
+    },
+    displayMonthlyVisit() {
+      return this.$store.getters["dashboard/getMonthlyVisit"];
+    },
+    displayMonthlyTransaction() {
+      return this.$store.getters["dashboard/getMonthlyTransaction"];
+    },
+    displayUsersLocation() {
+      return this.$store.getters["dashboard/getUsersLocation"];
+    },
+    dataChartMobileAppVer() {
+      return this.$store.getters["dashboard/getChartMobileAppVersion"];
+    },
+    dataChartUsersType() {
+      return this.$store.getters["dashboard/getChartUsersType"];
+    },
+    dataChartMobileType() {
+      return this.$store.getters["dashboard/getChartMobileType"];
+    },
+    displayLastActiveUsers() {
+      return this.$store.getters["dashboard/getLastActiveUsers"];
+    },
+    displayPrecentaceNewUser() {
+      let hasil = 0;
+      let new_users = this.$store.getters["dashboard/getNewUsersThisMonth"];
+      let total_users = this.$store.getters["dashboard/getTotalUsers"];
+      hasil = ((new_users * 100) / total_users).toFixed(2);
+      return hasil;
+    },
   },
 };
 </script>

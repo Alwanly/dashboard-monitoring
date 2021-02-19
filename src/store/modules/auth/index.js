@@ -1,5 +1,5 @@
-import { ApiServices, Services } from "../../services";
-import router from "../../router";
+import { ApiServices, Services } from "../../../services";
+import router from "../../../router";
 const state = {
   authenticating: false,
   messageError: "",
@@ -44,9 +44,12 @@ const actions = {
     Services.removeToken();
     Services.removeProfile();
     ApiServices.removeHeader();
-    clearInterval(Services.getIntervalAPIId);
+    let id = Services.getIntervalAPIId();
+    console.log(id)
+    clearInterval(id);
+    clearInterval(id); 
     commit("logout");
-
+    Services.removeIntervalAPIId();
     router.push({ name: "Login" }, () => {});
   },
 };

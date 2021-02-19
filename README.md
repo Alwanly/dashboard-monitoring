@@ -1,4 +1,4 @@
-# latihan-vue
+# dashboard-monitoring
 
 ## Project setup
 ```
