@@ -4,7 +4,7 @@
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" class="white--text">
       </v-app-bar-nav-icon>
       <v-toolbar-title class="text-uppercase">
-        <span>Dashboard</span>
+        <span>{{pageTitle}}</span>
       </v-toolbar-title>
       <v-spacer></v-spacer>
       <v-btn text @click="logout">
@@ -22,16 +22,26 @@
         </v-flex>
       </v-layout>
       <v-divider light></v-divider>
-      <v-list text>
+      <v-list-group
+        active-class="border"
+        color="#fff"
+        :value="true"
+        prepend-icon="dashboard"
+        router
+        to="/"
+      >
+        <template v-slot:activator>
+          <v-list-item-title class="white--text">Home</v-list-item-title>
+        </template>
         <v-list-item
           v-for="link in linksMainMenu"
           :key="link.text"
           router
           :to="link.route"
-          active-class="border"
+          active-class="border-sub"
           color="#fff"
         >
-          <v-list-item-action>
+          <v-list-item-action class="ml-4">
             <v-icon color="#fff">{{ link.icon }}</v-icon>
           </v-list-item-action>
           <v-list-item-content>
@@ -40,7 +50,7 @@
             }}</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-      </v-list>
+      </v-list-group>
       <v-divider></v-divider>
       <v-list text>
         <v-list-item
@@ -69,7 +79,18 @@
 export default {
   data: () => ({
     drawer: true,
-    linksMainMenu: [{ icon: "dashboard", text: "Dashboard", route: "/" }],
+    linksMainMenu: [
+      {
+        icon: "home",
+        text: "Dashboard",
+        route: "/",
+      },
+      {
+        icon:"person",
+        text:"users",
+        route:"/users"
+      }
+    ],
     linksSetting: [{ icon: "settings", text: "Setting", route: "/settings" }],
     username: null,
   }),
@@ -77,6 +98,9 @@ export default {
     user: function () {
       return this.$store.state.auth.userProfile;
     },
+    pageTitle:function(){           
+      return this.$store.getters["dashboard/getTitlePage"];
+    }
   },
   methods: {
     logout: function () {
@@ -88,5 +112,8 @@ export default {
 <style scoped>
 .border {
   border-left: 4px solid #0ba518;
+}
+.border-sub {
+  border-left: 4px solid #0fc7df;
 }
 </style>

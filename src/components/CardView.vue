@@ -5,7 +5,7 @@
         <v-list-item-title
           v-if="!currency"
           class="mb-1 white--text text-h5 font-weight-bold"
-          >{{ number }}</v-list-item-title
+          >{{ format(number) }}</v-list-item-title
         >
         <v-list-item-title
           v-else
@@ -24,6 +24,7 @@
 </template>
 <script>
 import { gsap } from "gsap";
+import {numberFormatComma} from "../plugins/script";
 export default {
   props: {
     icon: String,
@@ -39,20 +40,29 @@ export default {
     number: 0,
   }),
   methods: {
+     format: function (data) {
+       return numberFormatComma(data)
+    },    
     rupiah(bilangan) {
       var number_string = bilangan.toString(),
         sisa = number_string.length % 3,
         rupiah = number_string.substr(0, sisa),
         ribuan = number_string.substr(sisa).match(/\d{3}/g);
       if (ribuan) {
-        var separator = sisa ? "." : "";
-        rupiah += separator + ribuan.join(".");
+        var separator = sisa ? "," : "";
+        rupiah += separator + ribuan.join(",");
       }
       return rupiah;
     },
+    setNumber(){
+      this.number = this.value
+    }
+  },
+  mounted(){    
+    this.setNumber()
   },
   watch: {
-    value: function (newValue) {
+    value: function (newValue) {      
       gsap.to(this.$data, { duration: 0.5, number: newValue });
     },
   },

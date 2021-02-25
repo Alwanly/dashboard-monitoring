@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <h1 class="subheading grey--text">Dashboard</h1>
+  <div>    
+    <h2 class="subheading grey--text">Users Summary </h2>
     <v-layout row wrap>
       <v-flex sm12 xs12 md3 lg3 xl3>
         <card-view
@@ -188,7 +188,7 @@ export default {
     this.autoRefresh();
   },
   computed: {
-    displayTotalUser() {
+    displayTotalUser() {      
       return this.$store.getters["dashboard/getTotalUsers"];
     },
     displayUsersActive() {

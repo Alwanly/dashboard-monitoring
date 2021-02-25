@@ -20,7 +20,7 @@ const actions = {
       ).catch((err) => commit("auth_error", err));
       Services.saveToken(response.data.token);
       ApiServices.setHeader();
-      const getProfile = await ApiServices.get("user/me").catch((err) => {
+      const getProfile = await ApiServices.get("bi/user/me").catch((err) => {
         Services.removeToken();
         ApiServices.removeHeader();
         commit("auth_error", err);

@@ -1,5 +1,6 @@
-import { ApiServices } from "../../../services";
+import { ApiServices } from "../../services";
 const state = {
+  titlePage: "Dashboard",
   new_user_this_month: 0,
   total_users: 0,
   users_active: 0,
@@ -16,9 +17,12 @@ const state = {
 };
 
 const actions = {
+  async setTitlePage({commit},title){
+    commit("set_titlePage",title);
+  },
   async fetchTotalUsers({ commit }) {
     try {
-      const response = await ApiServices.get("users/total");
+      const response = await ApiServices.get("bi/users/total");
       commit("set_totalUsers", response.data.total_user);
       return true;
     } catch (e) {
@@ -28,8 +32,8 @@ const actions = {
   },
   async fetchUsersActive({ commit }) {
     try {
-      const response = await ApiServices.get("users/aktif");
-      commit("set_usersActive", response.data.total_user_aktif);
+      const response = await ApiServices.get("bi/users/active");
+      commit("set_usersActive", response.data.total_active_users);
     } catch (e) {
       console.log(e);
       return false;
@@ -37,7 +41,7 @@ const actions = {
   },
   async fetchMonthlyVisit({ commit }) {
     try {
-      const response = await ApiServices.get("users/visitor");
+      const response = await ApiServices.get("bi/users/visitor");
       commit("set_monthVisit", response.data.user_visit);
     } catch (e) {
       console.log(e);
@@ -46,7 +50,7 @@ const actions = {
   },
   async fetchMonthlyTransaction({ commit }) {
     try {
-      const response = await ApiServices.get("users/transaction");
+      const response = await ApiServices.get("bi/users/transaction");
       commit("set_monthTransaction", response.data.this_month_total);
     } catch (e) {
       console.log(e);
@@ -55,7 +59,7 @@ const actions = {
   },
   async fetchUsersLocation({ commit }) {
     try {
-      const response = await ApiServices.get("users/location");
+      const response = await ApiServices.get("bi/users/location");
       commit("set_usersLocation", response.data.data);
     } catch (e) {
       console.log(e);
@@ -64,7 +68,7 @@ const actions = {
   },
   async fetchMobileAppVersion({ commit }) {
     try {
-      const response = await ApiServices.get("users/mobile/app");
+      const response = await ApiServices.get("bi/users/mobile/app");
       const datas = {
         labels: [
           "Jan",
@@ -111,7 +115,7 @@ const actions = {
   },
   async fetchLastActiveUsers({ commit }) {
     try {
-      const response = await ApiServices.get("users/aktivitas");
+      const response = await ApiServices.get("bi/users/aktivitas");
       commit("set_lastactive_user", response.data.data);
       return true;
     } catch (e) {
@@ -121,7 +125,7 @@ const actions = {
   },
   async fetchUsersType({ commit }) {
     try {
-      const response = await ApiServices.get("users/type");
+      const response = await ApiServices.get("bi/users/type");
       const datas = {
         labels: ["New User", "Existing User"],
         datasets: [
@@ -173,7 +177,7 @@ const actions = {
   },
   async fetchMobileType({ commit }) {
     try {
-      const response = await ApiServices.get("users/mobile/usage");
+      const response = await ApiServices.get("bi/users/mobile/usage");
       const datas = {
         labels: [response.data.data[0].os, response.data.data[1].os],
         datasets: [
@@ -222,8 +226,12 @@ const actions = {
       return false;
     }
   },
+  
 };
 const mutations = {
+  set_titlePage(state,title){
+    state.titlePage = title;    
+  },
   set_totalUsers(state, data) {
     state.total_users = data;
   },
@@ -282,6 +290,7 @@ const getters = {
     };
   },
   getNewUsersThisMonth: (state) => state.new_user_this_month,
+  getTitlePage:(state) => state.titlePage,
 };
 
 export const dashboard = {
