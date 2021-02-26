@@ -1,7 +1,15 @@
 <template>
   <div>
+    <div class="text-right">
+      <span class="text-subtitle1 gray">Last Update {{ last_update }} </span>
+      <v-btn elevation="5" color="primary" @click="fetchAll">
+        Refresh Data <v-icon>update</v-icon>
+      </v-btn>
+    </div>
+    <v-divider class="mt-3 mb-2"></v-divider>
     <h2 class="subheading grey--text">General</h2>
-    <v-layout row wrap>
+    <v-layout>
+      <!-- dialog spread clients agent -->
       <v-dialog v-model="showClientSpread" persistent max-width="80vw">
         <v-card-title class="justify-end">
           <v-btn
@@ -11,7 +19,6 @@
           >
             <v-icon>close</v-icon>
           </v-btn>
-          {{ data }}
         </v-card-title>
         <v-card>
           <GmapMap
@@ -50,9 +57,13 @@
           </GmapMap>
         </v-card>
       </v-dialog>
-      <v-flex sm6 xs6 md3 lg3 xl3 class="ma-4">
+      <!-- Chart General -->
+      <v-flex sm12 xs12 md3 lg3 xl3 class="ma-4">
         <v-card class="mb-4">
-          <v-list-item-content class="text-left ml-3 mr-3">
+          <v-list-item-content
+            v-if="displayTotalUsers"
+            class="text-left ml-3 mr-3"
+          >
             <v-list-item-title class="mb-4 text-h5 font-weight-bold blue--text">
               {{ formatNumber(displayTotalUsers) }}
             </v-list-item-title>
@@ -68,9 +79,19 @@
               </v-tooltip>
             </v-list-item-subtitle>
           </v-list-item-content>
+          <v-card-text v-else class="text-center">
+            <v-progress-circular
+              :size="50"
+              color="primary"
+              indeterminate
+            ></v-progress-circular>
+          </v-card-text>
         </v-card>
         <v-card class="mb-4">
-          <v-list-item-content class="text-left ml-3 mr-3">
+          <v-list-item-content
+            v-if="displayActiveUsers"
+            class="text-left ml-3 mr-3"
+          >
             <v-list-item-title class="mb-4 text-h5 font-weight-bold blue--text">
               {{ formatNumber(displayActiveUsers) }}
             </v-list-item-title>
@@ -86,10 +107,17 @@
               </v-tooltip>
             </v-list-item-subtitle>
           </v-list-item-content>
+          <v-card-text v-else class="text-center">
+            <v-progress-circular
+              :size="50"
+              color="primary"
+              indeterminate
+            ></v-progress-circular>
+          </v-card-text>
         </v-card>
       </v-flex>
       <!-- Consumtive users -->
-      <v-flex sm6 xs6 md3 lg4 xl4 class="ma-4">
+      <v-flex sm12 xs12 md3 lg4 xl4 class="ma-4">
         <v-card class="mb-4">
           <v-card-title class="card-title-border">
             Consumtive Users
@@ -122,12 +150,19 @@
                   </tr>
                 </template>
               </v-data-table>
+              <v-card-text v-else class="text-center">
+                <v-progress-circular
+                  :size="50"
+                  color="primary"
+                  indeterminate
+                ></v-progress-circular>
+              </v-card-text>
             </v-flex>
           </v-layout>
         </v-card>
       </v-flex>
       <!-- Agents -->
-      <v-flex sm6 xs6 md3 lg4 xl4 class="ma-4">
+      <v-flex sm12 xs12 md3 lg4 xl4 class="ma-4">
         <v-card class="mb-4">
           <v-card-title class="card-title-border">
             Agents
@@ -141,13 +176,41 @@
             </v-tooltip>
           </v-card-title>
           <v-layout column style="height: 50vh" class="pa-4">
-            <v-flex class="card-overflow">
+            <v-flex class="card-overflow" v-if="displayAgents">
+              <div class="text-center pa-1">
+                <v-pagination v-model="page" :length="pageCount"></v-pagination>
+                <v-row>
+                  <v-col cols="8">
+                    <v-text-field
+                      v-model="search_agent"
+                      label="Search Agent"
+                      type="text"
+                      append-icon="mdi-magnify"
+                      single-line
+                      hide-details
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="4">
+                    <v-text-field
+                      :value="itemsPerPage"
+                      label="Items per page"
+                      type="number"
+                      min="-1"
+                      max="15"
+                      @input="itemsPerPage = parseInt($event, 10)"
+                    ></v-text-field>
+                  </v-col>
+                </v-row>
+              </div>
               <v-data-table
-                v-if="displayAgents"
+                :search="search_agent"
                 :headers="agentsHeadres"
                 :items="displayAgents"
-                :items-per-page="10"
+                :items-per-page="itemsPerPage"
                 hide-default-footer
+                :page.sync="page"
+                class="elevation-1"
+                @page-count="pageCount = $event"
               >
                 <template v-slot:item="{ item, index }">
                   <tr>
@@ -165,17 +228,69 @@
                     </td>
                   </tr>
                 </template>
-                <template v-slot:top="{ pagination, options, updateOptions }">
+                <!-- <template v-slot:top="{ pagination, options, updateOptions }">
                   <v-data-footer
                     :pagination="pagination"
                     :options="options"
                     @update:options="updateOptions"
                     items-per-page-text="$vuetify.dataTable.itemsPerPageText"
                   />
-                </template>
+                </template> -->
               </v-data-table>
             </v-flex>
+            <v-card-text v-else class="text-center">
+              <v-progress-circular
+                :size="50"
+                color="primary"
+                indeterminate
+              ></v-progress-circular>
+            </v-card-text>
           </v-layout>
+        </v-card>
+      </v-flex>
+    </v-layout>
+    <v-divider class="mt-3 mb-2"></v-divider>
+    <v-layout>
+      <h2 class="subheading grey--text">Growth</h2>
+      <!-- <div class="">        
+        <v-btn elevation="5" color="primary" @click="fetchAll">
+          Refresh Data <v-icon>update</v-icon>
+        </v-btn>
+      </div> -->
+    </v-layout>
+    <v-layout row wrap>
+      <v-flex sm12 xs12 md4 lg4 xl4 class="ma-2">
+        <v-flex style="overflow: auto">
+          <v-card :loading="chartOSUsersGrowth.data == null" elevation="3">
+            <line-chart
+              v-if="chartOSUsersGrowth.data"
+              class="ma-3"
+              :height="300"
+              :data="chartOSUsersGrowth.data"
+              :options="chartOSUsersGrowth.options"
+            ></line-chart>
+          </v-card>
+        </v-flex>
+      </v-flex>
+      <v-flex sm12 xs12 md4 lg4 xl4 class="ma-2">
+        <v-card :loading="chartTopAgentsGrowth.data == null" elevation="3">
+          <line-chart
+            v-if="chartTopAgentsGrowth.data"
+            class="ma-3"
+            :height="300"
+            :data="chartTopAgentsGrowth.data"
+            :options="chartTopAgentsGrowth.options"
+          ></line-chart>
+        </v-card>
+      </v-flex>
+      <v-flex sm12 xs12 md4 lg4 xl4 class="ma-2">
+        <v-card :loading="chartActoveUsersGrowth.data == null" elevation="3">
+          <line-chart
+            v-if="chartActoveUsersGrowth.data"
+            class="ma-3"
+            :data="chartActoveUsersGrowth.data"
+            :options="chartActoveUsersGrowth.options"
+          ></line-chart>
         </v-card>
       </v-flex>
     </v-layout>
@@ -185,10 +300,21 @@
 <script>
 import { numberFormatComma } from "../plugins/script";
 // import ModalMaps from "@/components/ModalMaps";
+import LineChart from "../plugins/LineChart.js";
 export default {
   name: "Users",
+  components: {
+    LineChart,
+  },
   data() {
     return {
+      optionMonth: [3, 6, 12],
+      last_month: 12, //default
+      search_agent: "",
+      page: 1,
+      pageCount: 0,
+      itemsPerPage: 10,
+      last_update: 0,
       map: null,
       infoWindow: {
         position: { lat: 0, lng: 0 },
@@ -245,10 +371,12 @@ export default {
       return numberFormatComma(num);
     },
     fetchAll() {
+      const date = new Date();
+      this.last_update = date.toLocaleString("en-US");
       this.$store.dispatch("users/fetchGeneralUsers");
+      this.$store.dispatch("users/fetchGrowthUsers", this.last_month);
     },
     getAgentsClientSpread: function (clients) {
-      console.log(clients);
       this.showClientSpread = true;
       this.dataClientSpread = clients;
     },
@@ -280,6 +408,15 @@ export default {
     displayAgents() {
       return this.$store.getters["users/getGeneral"].agents;
     },
+    chartOSUsersGrowth() {
+      return this.$store.getters["users/getGrowth"].overall_growth_usersOs;
+    },
+    chartTopAgentsGrowth() {
+      return this.$store.getters["users/getGrowth"].top_agents_growth;
+    },
+    chartActoveUsersGrowth() {
+      return this.$store.getters["users/getGrowth"].active_users_growth;
+    },
   },
 };
 </script>
@@ -289,6 +426,7 @@ export default {
 }
 .card-overflow {
   overflow: auto;
+  overflow-x: hidden;
 }
 /* Hide scrollbar for Chrome, Safari and Opera
 .card-overflow::-webkit-scrollbar {

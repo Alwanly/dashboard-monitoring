@@ -1,5 +1,4 @@
-function numberFormatComma(num, fix) {
-  console.log(num);
+function numberFormatComma(num, fix) {  
   var p = num.toFixed(fix).split(".");
   return (
     p[0].split("").reduceRight(function(acc, num, i, orig) {
