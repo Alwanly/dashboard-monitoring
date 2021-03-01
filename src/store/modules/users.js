@@ -14,6 +14,13 @@ const state = {
   options_topAgents_per_month: null,
   data_active_users_per_month: null,
   options_active_users_per_month: null,
+  //data users locations
+  oleh_oleh_users_locations: null,
+  umroh_users_locations: null,
+  zakat_users_locations: null,
+  paket_data_users_locations: null,
+  news_users_locations: null,
+  agents_locations: null,
 };
 
 const actions = {
@@ -44,6 +51,30 @@ const actions = {
       dispatch("setUsersPerOS", datas.growth_usersBy_os);
       dispatch("setTopAgentsGrowth", datas.growth_agents);
       dispatch("setActiveUsersGrowth", datas.active_users);
+    } catch (e) {
+      return false;
+    }
+  },
+  async fetchUsersLocations({ commit }) {
+    commit("pre_usersLocations", null);
+    const url = "bi/users/location/service/";
+    try {
+      const res_umroh = await ApiServices.get(`${url}umroh`);
+      const res_oleholeh = await ApiServices.get(`${url}oleh-oleh`);
+      const res_news = await ApiServices.get(`${url}news`);
+      const res_paket_data = await ApiServices.get(`${url}paket_data`);
+      const res_agents = await ApiServices.get("bi/users/location/agents");
+      const res_zakat = await ApiServices.get(`${url}zakat`);
+      let data = {
+        res_agents,
+        res_news,
+        res_oleholeh,
+        res_paket_data,
+        res_umroh,
+        res_zakat,
+      };
+      commit("set_usersLocations", data);
+      return true;
     } catch (e) {
       return false;
     }
@@ -173,13 +204,18 @@ const actions = {
     options = {
       title: {
         display: true,
-        text: "Growth of Android and IOS users",
+        text: "Top 10 Agents Growth",
         position: "top",
+      },
+      legend: {
+        // display:false,
+        position: "left",
       },
       scales: {
         yAxes: [
           {
             ticks: {
+              // max:1000,
               min: 1,
               callback: function(value) {
                 if (value % 1 == 0) {
@@ -195,6 +231,14 @@ const actions = {
   },
 };
 const mutations = {
+  pre_usersLocations(state, prefetch) {
+    state.oleh_oleh_users_locations = prefetch;
+    state.umroh_users_locations = prefetch;
+    state.zakat_users_locations = prefetch;
+    state.paket_data_users_locations = prefetch;
+    state.news_users_locations = prefetch;
+    state.agents_locations = prefetch;
+  },
   pre_general(state, prefetch) {
     state.total_users = prefetch;
     state.active_users = prefetch;
@@ -227,6 +271,15 @@ const mutations = {
     state.consumtive_users = general.consumtive_users;
     state.agents = general.agent_users;
   },
+  set_usersLocations(state, usersLocations) {
+    console.log(usersLocations);
+    state.oleh_oleh_users_locations = usersLocations.res_oleholeh.data.data;
+    state.umroh_users_locations = usersLocations.res_umroh.data.data;
+    state.zakat_users_locations = usersLocations.res_zakat.data.data;
+    state.paket_data_users_locations = usersLocations.res_paket_data.data.data;
+    state.news_users_locations = usersLocations.res_news.data.data;
+    state.agents_locations = usersLocations.res_agents.data.data;
+  },
 };
 const getters = {
   getGeneral: (state) => {
@@ -247,10 +300,20 @@ const getters = {
         data: state.data_topAgents_per_month,
         options: state.options_topAgents_per_month,
       },
-      active_users_growth:{
-        data:state.data_active_users_per_month,
-        options:state.options_active_users_per_month
-      }
+      active_users_growth: {
+        data: state.data_active_users_per_month,
+        options: state.options_active_users_per_month,
+      },
+    };
+  },
+  getUsersLocations: (state) => {
+    return {
+      oleh_oleh: state.oleh_oleh_users_locations,
+      umroh: state.umroh_users_locations,
+      paket_data: state.paket_data_users_locations,
+      zakat: state.zakat_users_locations,
+      news: state.news_users_locations,
+      agents: state.agents_locations,
     };
   },
 };

@@ -8,7 +8,7 @@
     </div>
     <v-divider class="mt-3 mb-2"></v-divider>
     <h2 class="subheading grey--text">General</h2>
-    <v-layout>
+    <v-layout row wrap>
       <!-- dialog spread clients agent -->
       <v-dialog v-model="showClientSpread" persistent max-width="80vw">
         <v-card-title class="justify-end">
@@ -58,7 +58,7 @@
         </v-card>
       </v-dialog>
       <!-- Chart General -->
-      <v-flex sm12 xs12 md3 lg3 xl3 class="ma-4">
+      <v-flex sm12 xs12 md2 lg2 xl2 class="ma-4">
         <v-card class="mb-4">
           <v-list-item-content
             v-if="displayTotalUsers"
@@ -228,14 +228,6 @@
                     </td>
                   </tr>
                 </template>
-                <!-- <template v-slot:top="{ pagination, options, updateOptions }">
-                  <v-data-footer
-                    :pagination="pagination"
-                    :options="options"
-                    @update:options="updateOptions"
-                    items-per-page-text="$vuetify.dataTable.itemsPerPageText"
-                  />
-                </template> -->
               </v-data-table>
             </v-flex>
             <v-card-text v-else class="text-center">
@@ -250,48 +242,184 @@
       </v-flex>
     </v-layout>
     <v-divider class="mt-3 mb-2"></v-divider>
-    <v-layout>
-      <h2 class="subheading grey--text">Growth</h2>
-      <!-- <div class="">        
-        <v-btn elevation="5" color="primary" @click="fetchAll">
-          Refresh Data <v-icon>update</v-icon>
-        </v-btn>
-      </div> -->
-    </v-layout>
-    <v-layout row wrap>
-      <v-flex sm12 xs12 md4 lg4 xl4 class="ma-2">
-        <v-flex style="overflow: auto">
-          <v-card :loading="chartOSUsersGrowth.data == null" elevation="3">
+    <div>
+      <v-row>
+        <v-col cols="6">
+          <h2 class="subheading grey--text">Growth</h2>
+        </v-col>
+        <v-col cols="3" class="text-right">
+          <span>Last Month</span>
+        </v-col>
+        <v-col cols="3">
+          <v-select
+            :items="option_month"
+            label="Select Last Month"
+            v-model="last_month"
+            solo
+            color="primary"
+            dense
+          ></v-select>
+        </v-col>
+      </v-row>
+      <v-row class="mt-3">
+        <v-col lg="6" md="6" sm="12">
+          <v-card style="height: 50vh" class="pa-3 d-flex flex-column">
             <line-chart
               v-if="chartOSUsersGrowth.data"
-              class="ma-3"
-              :height="300"
+              :height="200"
               :data="chartOSUsersGrowth.data"
               :options="chartOSUsersGrowth.options"
             ></line-chart>
+            <v-card-text v-else class="text-center">
+              <v-progress-circular
+                :size="50"
+                color="primary"
+                indeterminate
+              ></v-progress-circular>
+            </v-card-text>
           </v-card>
-        </v-flex>
-      </v-flex>
-      <v-flex sm12 xs12 md4 lg4 xl4 class="ma-2">
-        <v-card :loading="chartTopAgentsGrowth.data == null" elevation="3">
-          <line-chart
-            v-if="chartTopAgentsGrowth.data"
-            class="ma-3"
-            :height="300"
-            :data="chartTopAgentsGrowth.data"
-            :options="chartTopAgentsGrowth.options"
-          ></line-chart>
+        </v-col>
+        <v-col lg="6" md="6" sm="12">
+          <v-card
+            style="height: 50vh"
+            class="pa-3 d-flex flex-column max-height:50vh"
+          >
+            <line-chart
+              v-if="chartActoveUsersGrowth.data"
+              :height="200"
+              :data="chartActoveUsersGrowth.data"
+              :options="chartActoveUsersGrowth.options"
+            ></line-chart>
+            <v-card-text v-else class="text-center">
+              <v-progress-circular
+                :size="50"
+                color="primary"
+                indeterminate
+              ></v-progress-circular>
+            </v-card-text>
+          </v-card>
+        </v-col>
+        <v-col cols="12">
+          <v-card style="height: 60vh" class="pa-3 d-flex flex-column">
+            <line-chart
+              v-if="chartTopAgentsGrowth.data"
+              :height="115"
+              :data="chartTopAgentsGrowth.data"
+              :options="chartTopAgentsGrowth.options"
+            ></line-chart>
+            <v-card-text v-else class="text-center">
+              <v-progress-circular
+                :size="50"
+                color="primary"
+                indeterminate
+              ></v-progress-circular>
+            </v-card-text>
+          </v-card>
+        </v-col>
+      </v-row>
+    </div>
+    <v-divider class="mt-3 mb-2"></v-divider>
+    <h2 class="subheading grey--text">Users Locations</h2>
+    <v-layout row wrap class="mt-1">
+      <v-flex class="pa-4" sm12 xs12 md9 xl9 lg9>
+        <v-card v-if="usersUmrohLocations">
+          <GmapMap
+            :center="{ lat: -6.1741, lng: 106.8296 }"
+            :zoom="5"
+            ref="map"
+            style="width: 100%; height: 350px"
+            :options="{
+              zoomControl: true,
+              mapTypeControl: false,
+              scaleControl: false,
+              streetViewControl: false,
+              rotateControl: false,
+              fullscreenControl: true,
+              disableDefaultUi: false,
+            }"
+          >
+            <div v-if="users_location_opt[0].value">
+              <GmapMarker
+                :key="index"
+                v-for="(m, index) in usersOleholehhLocations"
+                :position="m.position"
+                :clickable="true"
+                icon="http://maps.google.com/mapfiles/kml/paddle/grn-blank.png"
+                @click="openInfoWindowTemplate(m)"
+              />
+            </div>
+            <div v-if="users_location_opt[1].value">
+              <GmapMarker
+                :key="index"
+                v-for="(m, index) in usersUmrohLocations"
+                :position="m.position"
+                :clickable="true"
+                icon="http://maps.google.com/mapfiles/kml/paddle/blu-blank.png"
+                @click="openInfoWindowTemplate(m)"
+              />
+            </div>
+            <div v-if="users_location_opt[2].value">
+              <GmapMarker
+                :key="index"
+                v-for="(m, index) in usersZakatLocations"
+                :position="m.position"
+                :clickable="true"
+                icon="http://maps.google.com/mapfiles/kml/paddle/ltblu-blank.png"
+                @click="openInfoWindowTemplate(m)"
+              />
+            </div>
+            <div v-if="users_location_opt[3].value">
+              <GmapMarker
+                :key="index"
+                v-for="(m, index) in usersPaketDataLocations"
+                :position="m.position"
+                :clickable="true"
+                icon="http://maps.google.com/mapfiles/kml/paddle/ylw-blank.png"
+                @click="openInfoWindowTemplate(m)"
+              />
+            </div>
+            <div v-if="users_location_opt[4].value">
+              <GmapMarker
+                :key="index"
+                v-for="(m, index) in usersNewsLocations"
+                :position="m.position"
+                :clickable="true"
+                icon="http://maps.google.com/mapfiles/kml/paddle/orange-blank.png"
+                @click="openInfoWindowTemplate(m)"
+              />
+            </div>
+            <div v-if="users_location_opt[5].value">
+              <GmapMarker
+                :key="index"
+                v-for="(m, index) in usersAgentLocations"
+                :position="m.position"
+                :clickable="true"
+                icon="http://maps.google.com/mapfiles/kml/paddle/pink-blank.png"
+                @click="openInfoWindowTemplate(m)"
+              />
+            </div>
+            <gmap-info-window
+              :options="{ maxWidth: 300 }"
+              :position="infoWindow.position"
+              :opened="infoWindow.open"
+              @closeclick="infoWindow.open = false"
+            >
+              <div v-html="infoWindow.template"></div>
+            </gmap-info-window>
+          </GmapMap>
         </v-card>
+        <v-card-text v-else class="text-center">
+          <v-progress-circular
+            :size="50"
+            color="primary"
+            indeterminate
+          ></v-progress-circular>
+        </v-card-text>
       </v-flex>
-      <v-flex sm12 xs12 md4 lg4 xl4 class="ma-2">
-        <v-card :loading="chartActoveUsersGrowth.data == null" elevation="3">
-          <line-chart
-            v-if="chartActoveUsersGrowth.data"
-            class="ma-3"
-            :data="chartActoveUsersGrowth.data"
-            :options="chartActoveUsersGrowth.options"
-          ></line-chart>
-        </v-card>
+      <v-flex sm12 xs12 md3 lg3 xl3 class="pa-4">
+        <div v-for="option in users_location_opt" :key="option.name">
+          <v-checkbox v-model="option.value" :label="option.name"></v-checkbox>
+        </div>
       </v-flex>
     </v-layout>
   </div>
@@ -308,8 +436,16 @@ export default {
   },
   data() {
     return {
-      optionMonth: [3, 6, 12],
-      last_month: 12, //default
+      users_location_opt: [
+        { name: "Oleh-oleh", value: true },
+        { name: "Umroh", value: true },
+        { name: "Zakat", value: false },
+        { name: "Paket Data", value: false },
+        { name: "News", value: false },
+        { name: "Agents", value: false },
+      ],
+      option_month: [3, 6, 12],
+      last_month: 3, //default
       search_agent: "",
       page: 1,
       pageCount: 0,
@@ -375,6 +511,7 @@ export default {
       this.last_update = date.toLocaleString("en-US");
       this.$store.dispatch("users/fetchGeneralUsers");
       this.$store.dispatch("users/fetchGrowthUsers", this.last_month);
+      this.$store.dispatch("users/fetchUsersLocations", this.last_month);
     },
     getAgentsClientSpread: function (clients) {
       this.showClientSpread = true;
@@ -416,6 +553,30 @@ export default {
     },
     chartActoveUsersGrowth() {
       return this.$store.getters["users/getGrowth"].active_users_growth;
+    },
+    usersUmrohLocations() {
+      return this.$store.getters["users/getUsersLocations"].umroh;
+    },
+    usersOleholehhLocations() {
+      return this.$store.getters["users/getUsersLocations"].oleh_oleh;
+    },
+    usersPaketDataLocations() {
+      return this.$store.getters["users/getUsersLocations"].paket_data;
+    },
+    usersZakatLocations() {
+      return this.$store.getters["users/getUsersLocations"].zakat;
+    },
+    usersNewsLocations() {
+      return this.$store.getters["users/getUsersLocations"].news;
+    },
+    usersAgentLocations() {
+      return this.$store.getters["users/getUsersLocations"].agents;
+    },
+  },
+  watch: {
+    last_month: function (val) {
+      console.log(val);
+      this.fetchAll();
     },
   },
 };
